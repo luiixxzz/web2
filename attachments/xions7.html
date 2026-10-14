@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="es" data-color-mode="dark" data-dark-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestión · Puerto Ayacucho</title>
+  <style>
+    /* ================================================================
+       GITHUB PRIMER DARK THEME — DESIGN TOKENS
+       ================================================================ */
+    :root, [data-color-mode="dark"][data-dark-theme="dark"] {
+      /* Canvas */
+      --color-canvas-default: #0d1117;
+      --color-canvas-overlay: #161b22;
+      --color-canvas-inset: #010409;
+      --color-canvas-subtle: #161b22;
+
+      /* Foreground */
+      --color-fg-default: #c9d1d9;
+      --color-fg-muted: #8b949e;
+      --color-fg-subtle: #6e7681;
+      --color-fg-on-emphasis: #ffffff;
+      --color-fg-accent: #58a6ff;
+
+      /* Border */
+      --color-border-default: #30363d;
+      --color-border-muted: #21262d;
+      --color-border-subtle: rgba(240,246,252,0.1);
+
+      /* Accent */
+      --color-accent-fg: #58a6ff;
+      --color-accent-emphasis: #1f6feb;
+      --color-accent-muted: rgba(56,139,253,0.15);
+      --color-accent-subtle: rgba(56,139,253,0.1);
+
+      /* Success */
+      --color-success-fg: #3fb950;
+      --color-success-emphasis: #238636;
+      --color-success-muted: rgba(46,160,67,0.15);
+      --color-success-subtle: rgba(46,160,67,0.1);
+
+      /* Attention */
+      --color-attention-fg: #d29922;
+      --color-attention-emphasis: #9e6a03;
+      --color-attention-muted: rgba(187,128,9,0.15);
+      --color-attention-subtle: rgba(187,128,9,0.1);
+
+      /* Danger */
+      --color-danger-fg: #f85149;
+      --color-danger-emphasis: #da3633;
+      --color-danger-muted: rgba(248,81,73,0.15);
+      --color-danger-subtle: rgba(248,81,73,0.1);
+
+      /* Neutral */
+      --color-neutral-emphasis: #6e7681;
+      --color-neutral-muted: rgba(110,118,129,0.4);
+      --color-neutral-subtle: rgba(110,118,129,0.1);
+
+      /* Buttons */
+      --color-btn-text: #c9d1d9;
+      --color-btn-bg: #21262d;
+      --color-btn-border: rgba(240,246,252,0.1);
+      --color-btn-hover-bg: #30363d;
+      --color-btn-hover-border: #8b949e;
+      --color-btn-active-bg: hsla(212,12%,18%,1);
+      --color-btn-active-border: #6e7681;
+      --color-btn-primary-text: #ffffff;
+      --color-btn-primary-bg: #238636;
+      --color-btn-primary-hover-bg: #2ea043;
+      --color-btn-danger-text: #f85149;
+      --color-btn-danger-hover-bg: #da3633;
+
+      /* Shadows */
+      --shadow-resting: 0 1px 0 rgba(31,35,40,0.04);
+      --shadow-floating: 0 8px 24px rgba(1,4,9,0.6);
+
+      /* Typography */
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+      /* Radius */
+      --radius-small: 3px;
+      --radius-medium: 6px;
+      --radius-large: 12px;
+      --radius-full: 9999px;
+    }
+
+    /* ================================================================
+       BASE RESET & GLOBAL
+       ================================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-canvas-default);
+      color: var(--color-fg-default);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--color-accent-fg); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, kbd, pre {
+      font-family: var(--font-mono);
+      font-size: 0.857em;
+    }
+    img, svg { vertical-align: middle; }
+
+    /* ================================================================
+       LAYOUT
+       ================================================================ */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      flex: 1;
+    }
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+    }
+
+    /* ================================================================
+       HEADER (GitHub-style)
+       ================================================================ */
+    .Header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      background-color: var(--color-canvas-subtle);
+      border-bottom: 1px solid var(--color-border-default);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .Header-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .Header-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 16px; font-weight: 600; color: var(--color-fg-default);
+      text-decoration: none;
+    }
+    .Header-logo:hover { text-decoration: none; color: var(--color-fg-muted); }
+    .Header-logo svg { fill: var(--color-fg-default); }
+    .Header-nav { display: flex; align-items: center; gap: 8px; }
+    .Header-nav-item {
+      padding: 6px 12px; border-radius: var(--radius-medium);
+      font-size: 14px; font-weight: 500; color: var(--color-fg-default);
+      text-decoration: none; transition: background 0.2s;
+    }
+    .Header-nav-item:hover { background: var(--color-neutral-subtle); text-decoration: none; }
+    .Header-right { display: flex; align-items: center; gap: 12px; }
+
+    /* ================================================================
+       WORKSPACE BAR
+       ================================================================ */
+    .WorkspaceBar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 32px;
+      background: var(--color-canvas-default);
+      border-bottom: 1px solid var(--color-border-default);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .WorkspaceBar-info { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .WorkspaceBar-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 2px 12px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 500;
+    }
+    .WorkspaceBar-status.online { background: var(--color-success-subtle); color: var(--color-success-fg); border: 1px solid var(--color-success-muted); }
+    .WorkspaceBar-status.local { background: var(--color-attention-subtle); color: var(--color-attention-fg); border: 1px solid var(--color-attention-muted); }
+    .WorkspaceBar-status.offline { background: var(--color-danger-subtle); color: var(--color-danger-fg); border: 1px solid var(--color-danger-muted); }
+    .WorkspaceBar-pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: inline-block; }
+    .WorkspaceBar-pulse.online { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
+
+    /* ================================================================
+       UNDERLINE NAV (GitHub tabs)
+       ================================================================ */
+    .UnderlineNav {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--color-border-default);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .UnderlineNav-item {
+      position: relative;
+      padding: 12px 16px 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-fg-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s;
+      font-family: inherit;
+      display: inline-flex; align-items: center; gap: 6px;
+      border-bottom: 2px solid transparent;
+    }
+    .UnderlineNav-item:hover { color: var(--color-fg-default); text-decoration: none; }
+    .UnderlineNav-item[aria-selected="true"] {
+      color: var(--color-fg-default);
+      font-weight: 600;
+      border-bottom-color: var(--color-accent-emphasis);
+    }
+    .UnderlineNav-counter {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 20px; padding: 0 6px;
+      height: 20px; border-radius: var(--radius-full);
+      background: var(--color-neutral-subtle);
+      color: var(--color-fg-default);
+      font-size: 12px; font-weight: 500;
+    }
+
+    /* ================================================================
+       BOX (GitHub card)
+       ================================================================ */
+    .Box {
+      background: var(--color-canvas-overlay);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-medium);
+      transition: border-color 0.2s;
+    }
+    .Box:hover { border-color: var(--color-border-muted); }
+    .Box-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--color-canvas-subtle);
+      border-bottom: 1px solid var(--color-border-default);
+      border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+    }
+    .Box-header h2 {
+      font-size: 14px; font-weight: 600; color: var(--color-fg-default);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .Box-body { padding: 16px 20px; }
+    .Box-row {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--color-border-muted);
+    }
+    .Box-row:last-child { border-bottom: none; }
+    .Box-row:hover { background: rgba(177,186,196,0.03); }
+
+    /* ================================================================
+       BUTTONS (GitHub Btn)
+       ================================================================ */
+    .Btn {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 5px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid var(--color-btn-border);
+      border-radius: var(--radius-medium);
+      background: var(--color-btn-bg);
+      color: var(--color-btn-text);
+      box-shadow: var(--shadow-resting);
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .Btn:hover {
+      background: var(--color-btn-hover-bg);
+      border-color: var(--color-btn-hover-border);
+      text-decoration: none;
+    }
+    .Btn:active { background: var(--color-btn-active-bg); border-color: var(--color-btn-active-border); }
+    .Btn:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+    .Btn-sm { padding: 3px 12px; font-size: 12px; }
+    .Btn-primary {
+      background: var(--color-btn-primary-bg);
+      color: var(--color-btn-primary-text);
+      border-color: var(--color-btn-primary-border);
+    }
+    .Btn-primary:hover { background: var(--color-btn-primary-hover-bg); border-color: var(--color-btn-primary-border); }
+    .Btn-danger {
+      color: var(--color-btn-danger-text);
+      border-color: var(--color-btn-danger-border);
+    }
+    .Btn-danger:hover { background: var(--color-btn-danger-hover-bg); color: var(--color-btn-primary-text); border-color: var(--color-btn-danger-hover-bg); }
+    .Btn-invisible {
+      background: transparent; border-color: transparent; box-shadow: none;
+      color: var(--color-accent-fg);
+    }
+    .Btn-invisible:hover { background: var(--color-accent-subtle); border-color: transparent; }
+    .Btn-group { display: inline-flex; }
+    .Btn-group .Btn { border-radius: 0; margin-left: -1px; }
+    .Btn-group .Btn:first-child { border-radius: var(--radius-medium) 0 0 var(--radius-medium); margin-left: 0; }
+    .Btn-group .Btn:last-child { border-radius: 0 var(--radius-medium) var(--radius-medium) 0; }
+
+    /* ================================================================
+       FORM CONTROLS
+       ================================================================ */
+    .FormControl {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .FormControl-label {
+      font-size: 14px; font-weight: 600; color: var(--color-fg-default);
+    }
+    .FormControl-caption {
+      font-size: 12px; color: var(--color-fg-muted);
+    }
+    .FormControl-input, .FormControl-select {
+      padding: 5px 12px;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--color-fg-default);
+      background: var(--color-canvas-default);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-medium);
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .FormControl-input:focus, .FormControl-select:focus {
+      border-color: var(--color-accent-emphasis);
+      box-shadow: inset 0 0 0 1px var(--color-accent-emphasis);
+    }
+    .FormControl-input::placeholder { color: var(--color-fg-subtle); }
+    .FormControl-input[readonly] { background: var(--color-canvas-subtle); color: var(--color-fg-muted); }
+    .FormControl--small .FormControl-input { padding: 3px 8px; font-size: 12px; }
+
+    /* ================================================================
+       DATA TABLE
+       ================================================================ */
+    .DataTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .DataTable th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-fg-muted);
+      border-bottom: 1px solid var(--color-border-default);
+      background: var(--color-canvas-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .DataTable td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--color-border-muted);
+      color: var(--color-fg-default);
+      vertical-align: middle;
+    }
+    .DataTable tr:hover td { background: rgba(177,186,196,0.03); }
+    .DataTable input {
+      padding: 3px 8px;
+      font-size: 14px;
+      color: var(--color-fg-default);
+      background: var(--color-canvas-default);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-small);
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .DataTable input:focus { border-color: var(--color-accent-emphasis); box-shadow: inset 0 0 0 1px var(--color-accent-emphasis); }
+    .DataTable-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: var(--radius-medium);
+      border: 1px solid var(--color-border-default);
+    }
+    .DataTable-container .DataTable {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .DataTable-container .DataTable thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: var(--color-canvas-subtle);
+    }
+
+    /* ================================================================
+       LABEL (badge)
+       ================================================================ */
+    .Label {
+      display: inline-flex; align-items: center;
+      padding: 0 10px;
+      height: 22px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 22px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+    }
+    .Label--accent { background: var(--color-accent-subtle); color: var(--color-accent-fg); border-color: var(--color-accent-muted); }
+    .Label--success { background: var(--color-success-subtle); color: var(--color-success-fg); border-color: var(--color-success-muted); }
+    .Label--attention { background: var(--color-attention-subtle); color: var(--color-attention-fg); border-color: var(--color-attention-muted); }
+    .Label--danger { background: var(--color-danger-subtle); color: var(--color-danger-fg); border-color: var(--color-danger-muted); }
+    .Label--neutral { background: var(--color-neutral-subtle); color: var(--color-fg-muted); border-color: var(--color-neutral-muted); }
+
+    /* ================================================================
+       FLASH (alert)
+       ================================================================ */
+    .Flash {
+      position: relative;
+      padding: 12px 16px;
+      border-radius: var(--radius-medium);
+      border: 1px solid transparent;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .Flash--success { background: var(--color-success-subtle); color: var(--color-success-fg); border-color: var(--color-success-muted); }
+    .Flash--warning { background: var(--color-attention-subtle); color: var(--color-attention-fg); border-color: var(--color-attention-muted); }
+    .Flash--error { background: var(--color-danger-subtle); color: var(--color-danger-fg); border-color: var(--color-danger-muted); }
+    .Flash--info { background: var(--color-accent-subtle); color: var(--color-accent-fg); border-color: var(--color-accent-muted); }
+
+    /* ================================================================
+       TOAST
+       ================================================================ */
+    .Toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 9999;
+      max-width: 400px;
+      width: 100%;
+    }
+    .Toast {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      background: var(--color-canvas-overlay);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-medium);
+      box-shadow: var(--shadow-floating);
+      font-size: 14px;
+      animation: slideIn 0.3s ease;
+      transform-origin: bottom right;
+    }
+    .Toast--success { border-left: 4px solid var(--color-success-emphasis); }
+    .Toast--error { border-left: 4px solid var(--color-danger-emphasis); }
+    .Toast--info { border-left: 4px solid var(--color-accent-emphasis); }
+    .Toast--warning { border-left: 4px solid var(--color-attention-emphasis); }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ================================================================
+       OVERLAY / MODAL
+       ================================================================ */
+    .Overlay {
+      position: fixed; inset: 0;
+      background: rgba(1,4,9,0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+    .Overlay.visible { display: flex; }
+    .Overlay-body {
+      background: var(--color-canvas-overlay);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-large);
+      box-shadow: var(--shadow-floating);
+      max-width: 520px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .Overlay-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--color-border-default);
+    }
+    .Overlay-header h3 { font-size: 16px; font-weight: 600; }
+    .Overlay-content { padding: 24px; }
+    .Overlay-footer {
+      display: flex; justify-content: flex-end; gap: 8px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--color-border-default);
+    }
+
+    /* ================================================================
+       PROGRESS BAR
+       ================================================================ */
+    .Progress {
+      display: flex; height: 8px;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      background: var(--color-border-muted);
+    }
+    .Progress-item { height: 100%; transition: width 0.5s ease; }
+
+    /* ================================================================
+       SECTION UTILITIES
+       ================================================================ */
+    .section { display: none; }
+    .section.active { display: block; }
+    .d-flex { display: flex; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-1 { flex: 1; }
+    .align-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-1 { gap: 4px; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 16px; }
+    .gap-4 { gap: 24px; }
+    .mt-1 { margin-top: 4px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 16px; }
+    .mt-4 { margin-top: 24px; }
+    .mb-1 { margin-bottom: 4px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 16px; }
+    .mb-4 { margin-bottom: 24px; }
+    .mr-2 { margin-right: 8px; }
+    .ml-auto { margin-left: auto; }
+    .text-mono { font-family: var(--font-mono); }
+    .text-small { font-size: 12px; }
+    .text-medium { font-size: 14px; }
+    .text-large { font-size: 16px; }
+    .text-bold { font-weight: 600; }
+    .text-muted { color: var(--color-fg-muted); }
+    .text-accent { color: var(--color-accent-fg); }
+    .text-success { color: var(--color-success-fg); }
+    .text-danger { color: var(--color-danger-fg); }
+    .text-center { text-align: center; }
+    .w-full { width: 100%; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .Header { padding: 12px 16px; }
+      .WorkspaceBar { padding: 12px 16px; }
+      .UnderlineNav { gap: 2px; }
+      .UnderlineNav-item { padding: 8px 12px; font-size: 13px; }
+      .DataTable-container { max-height: 300px; }
+    }
+
+    /* ================================================================
+       BLANKSLATE (empty state)
+       ================================================================ */
+    .Blankslate {
+      text-align: center;
+      padding: 48px 32px;
+      color: var(--color-fg-muted);
+    }
+    .Blankslate-icon { margin-bottom: 16px; opacity: 0.5; }
+    .Blankslate-title { font-size: 20px; font-weight: 600; color: var(--color-fg-default); margin-bottom: 8px; }
+    .Blankslate-desc { font-size: 14px; max-width: 400px; margin: 0 auto; }
+
+    /* ================================================================
+       SUBHEADER
+       ================================================================ */
+    .SubHeader {
+      display: flex; align-items: center; gap: 8px;
+      padding: 16px 0 8px;
+      border-bottom: 1px solid var(--color-border-default);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .SubHeader-title { font-size: 20px; font-weight: 400; color: var(--color-fg-default); }
+    .SubHeader-badge {
+      font-size: 12px; color: var(--color-fg-muted); border: 1px solid var(--color-border-default);
+      padding: 2px 10px; border-radius: var(--radius-full);
+      background: var(--color-canvas-subtle);
+    }
+
+    /* ================================================================
+       FOOTER
+       ================================================================ */
+    .footer {
+      padding: 40px 32px;
+      border-top: 1px solid var(--color-border-default);
+      text-align: center;
+      margin-top: auto;
+    }
+
+    /* ================================================================
+       ESTADÍSTICAS DEL HISTORIAL BCV
+       ================================================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--color-canvas-inset);
+      padding: 12px 16px;
+      border-radius: var(--radius-medium);
+      border: 1px solid var(--color-border-muted);
+    }
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: var(--color-fg-muted);
+    }
+    .stat-card .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="Header" role="banner">
+    <div class="Header-left">
+      <a href="#" class="Header-logo" aria-label="Inicio">
+        <svg height="32" width="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8z"/>
+        </svg>
+        <span>Sistema de Gestión</span>
+      </a>
+      <nav class="Header-nav" aria-label="Navegación principal" id="headerNavExtra" style="display:none">
+        <a href="#" class="Header-nav-item">Issues</a>
+        <a href="#" class="Header-nav-item">Pull requests</a>
+      </nav>
+    </div>
+    <div class="Header-right">
+      <button class="Btn Btn-sm" onclick="window.showWorkspaceModal()" aria-label="Abrir configuración del workspace">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg>
+        Workspace
+      </button>
+      <button class="Btn Btn-sm Btn-invisible" onclick="window.saveAllSettings()" aria-label="Guardar ajustes">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11.28 6.78a.75.75 0 0 0-1.06-1.06L7.25 8.69 5.78 7.22a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z"/><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== WORKSPACE BAR ===================== -->
+  <div class="WorkspaceBar" id="workspaceBar" role="status" aria-live="polite">
+    <div class="WorkspaceBar-info">
+      <span class="WorkspaceBar-status local" id="connStatus">
+        <span class="WorkspaceBar-pulse" id="connPulse"></span>
+        <span id="connText">Modo local</span>
+      </span>
+      <span class="text-muted" id="workspaceName">—</span>
+    </div>
+    <div class="d-flex align-center gap-2 flex-wrap">
+      <button class="Btn Btn-sm Btn-primary" onclick="window.fetchAll()" aria-label="Actualizar datos">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.746 5.5 5.5 0 0 0-2.483-8.63.75.75 0 1 1 .704-1.326 7 7 0 0 1-3.458 12.68 7 7 0 0 1-12.19-3.495.75.75 0 0 1 .656-.834Zm5.293-4.003a.75.75 0 0 1 .75.75v2.69l1.28-1.28a.75.75 0 1 1 1.06 1.061l-2.5 2.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 0 1 1.06-1.06l1.28 1.28V4.752a.75.75 0 0 1 .75-.75Z"/></svg>
+        Actualizar
+      </button>
+      <button class="Btn Btn-sm" id="autoBtn" onclick="window.toggleAuto()" aria-label="Alternar actualización automática">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg>
+        Auto: OFF
+      </button>
+      <span class="text-small text-muted" id="lastUpdate">—</span>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="container" style="padding-top: 24px; padding-bottom: 64px;">
+
+    <!-- UnderlineNav -->
+    <nav class="UnderlineNav" role="tablist" aria-label="Secciones principales">
+      <button class="UnderlineNav-item" role="tab" aria-selected="true" aria-controls="sec-monitor" id="tab-monitor" onclick="window.showSection('monitor', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg>
+        Monitor
+      </button>
+      <button class="UnderlineNav-item" role="tab" aria-selected="false" aria-controls="sec-colchon" id="tab-colchon" onclick="window.showSection('colchon', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg>
+        Colchón
+      </button>
+      <button class="UnderlineNav-item" role="tab" aria-selected="false" aria-controls="sec-division" id="tab-division" onclick="window.showSection('division', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 3h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 3h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm-4 3h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"/></svg>
+        División
+      </button>
+      <button class="UnderlineNav-item" role="tab" aria-selected="false" aria-controls="sec-productos" id="tab-productos" onclick="window.showSection('productos', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.75 1h8.5c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 10.25 10H7.061l-2.574 2.573A1.458 1.458 0 0 1 2 11.543V10h-.25A1.75 1.75 0 0 1 0 8.25v-5.5C0 1.784.784 1 1.75 1ZM1.5 2.75v5.5c0 .138.112.25.25.25h1.5a.75.75 0 0 1 .75.75v1.243l2.13-2.13a.749.749 0 0 1 .53-.22h3.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13 2a.25.25 0 0 0-.25-.25h-.5a.75.75 0 0 1 0-1.5h.5c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 14.25 12H14v1.543a1.458 1.458 0 0 1-2.487 1.03L9.22 12.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.13 2.13v-1.243a.75.75 0 0 1 .75-.75h1.5a.25.25 0 0 0 .25-.25v-5.5Z"/></svg>
+        Productos
+        <span class="UnderlineNav-counter" id="productCount">0</span>
+      </button>
+      <button class="UnderlineNav-item" role="tab" aria-selected="false" aria-controls="sec-historial" id="tab-historial" onclick="window.showSection('historial', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75C0 1.784.784 1 1.75 1ZM1.5 2.75v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25ZM11.75 8a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1 0-1.5h4.5a.75.75 0 0 1 .75.75Zm-8-3.5a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75Z"/></svg>
+        Historial
+      </button>
+      <!-- NUEVA PESTAÑA: Historial BCV -->
+      <button class="UnderlineNav-item" role="tab" aria-selected="false" aria-controls="sec-historial-bcv" id="tab-historial-bcv" onclick="window.showSection('historial-bcv', this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h7A2.5 2.5 0 0 1 14 2.5v11a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-11Zm2.5-1h7a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1ZM4 3.75a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75ZM4 6.75a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75ZM4 9.75a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z"/></svg>
+        Historial BCV
+        <span class="UnderlineNav-counter" id="histBcvCount">0</span>
+      </button>
+    </nav>
+
+    <!-- ===================== SECCIÓN 1: MONITOR ===================== -->
+    <section class="section active" id="sec-monitor" role="tabpanel" aria-labelledby="tab-monitor">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>Monitor en vivo.</strong> Los datos se actualizan desde fuentes públicas. Si las APIs fallan (CORS), usa los <strong>ajustes manuales</strong> abajo.
+      </div>
+
+      <!-- Manual inputs -->
+      <div class="Box mb-4">
+        <div class="Box-header">
+          <h2>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 2.474l-4.097 4.096-1.612 3.865a.5.5 0 0 1-.65.246l-.866-.288a.5.5 0 0 0-.308.308l-.288.866a.5.5 0 0 1-.246.65l-3.865 1.612-4.096 4.097a1.75 1.75 0 0 1-2.474-2.474l4.097-4.096 1.612-3.865a.5.5 0 0 1 .65-.246l.866.288a.5.5 0 0 0 .308-.308l.288-.866a.5.5 0 0 1 .246-.65l3.865-1.612 4.096-4.097ZM3.855 11.69l2.116-2.116.71.71-2.116 2.116-.71-.71Zm3.478-3.478 2.117-2.117.71.71-2.117 2.117-.71-.71Z"/></svg>
+            Ajustes manuales
+          </h2>
+          <span class="Label Label--attention">Fallback</span>
+        </div>
+        <div class="Box-body">
+          <div class="grid-4">
+            <div class="FormControl">
+              <label class="FormControl-label" for="manualBcv">BCV (Bs/USD)</label>
+              <input type="number" class="FormControl-input" id="manualBcv" step="0.01" placeholder="737.88" oninput="window.onManualChange()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="manualBnbBuy">Binance Compra (Bs/USDT)</label>
+              <input type="number" class="FormControl-input" id="manualBnbBuy" step="0.01" placeholder="865.24" oninput="window.onManualChange()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="manualBnbSell">Binance Venta (Bs/USDT)</label>
+              <input type="number" class="FormControl-input" id="manualBnbSell" step="0.01" placeholder="864.33" oninput="window.onManualChange()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="manualCop">COP/USD</label>
+              <input type="number" class="FormControl-input" id="manualCop" step="0.01" placeholder="3200" oninput="window.onManualChange()">
+            </div>
+          </div>
+          <p class="FormControl-caption mt-2">💡 Si las APIs no cargan, ingresa aquí los valores de tu app de Binance. Tienen prioridad sobre las APIs.</p>
+        </div>
+      </div>
+
+      <!-- BCV -->
+      <div class="SubHeader">
+        <h2 class="SubHeader-title">🏛️ Banco Central de Venezuela</h2>
+        <span class="SubHeader-badge" id="bcvSourceBadge">API</span>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--accent">BCV</span>
+              <span class="text-small text-muted" id="mBcvUsdSource">Fuente: API</span>
+            </div>
+            <div class="text-large text-bold" id="mBcvUsd" style="font-size:28px">Cargando...</div>
+            <div class="text-small text-muted">Bs/USD</div>
+            <div class="mt-2 text-small" id="mBcvUsdDelta">—</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--accent">BCV</span>
+              <span class="text-small text-muted" id="mBcvEurSource">Fuente: API</span>
+            </div>
+            <div class="text-large text-bold" id="mBcvEur" style="font-size:28px">Cargando...</div>
+            <div class="text-small text-muted">Bs/EUR</div>
+            <div class="mt-2 text-small" id="mBcvEurDelta">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P2P -->
+      <div class="SubHeader">
+        <h2 class="SubHeader-title">💱 Mercado P2P</h2>
+        <span class="SubHeader-badge" id="p2pSourceBadge">API</span>
+      </div>
+      <div class="grid-4 mb-3">
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--attention">BINANCE</span>
+              <span class="text-small text-muted" id="mBnbBuySource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mBnbBuy">—</div>
+            <div class="text-small text-muted">Bs/USDT · Compra</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--attention">BINANCE</span>
+              <span class="text-small text-muted" id="mBnbSellSource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mBnbSell">—</div>
+            <div class="text-small text-muted">Bs/USDT · Venta</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--neutral">BYBIT</span>
+              <span class="text-small text-muted" id="mBybBuySource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mBybBuy">—</div>
+            <div class="text-small text-muted">Bs/USDT · Compra</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--neutral">BYBIT</span>
+              <span class="text-small text-muted" id="mBybSellSource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mBybSell">—</div>
+            <div class="text-small text-muted">Bs/USDT · Venta</div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="text-small text-muted">Promedio Binance P2P</span>
+              <span class="text-small text-muted" id="mBnbAvgSource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mBnbAvg" style="font-size:28px">—</div>
+            <div class="text-small text-muted">Bs/USDT</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="text-small text-muted mb-1">Diferencial BCV vs P2P</div>
+            <div class="text-large text-bold" id="mDiff">—</div>
+            <div class="text-small text-muted">Brecha cambiaria</div>
+            <div class="Progress mt-2" id="mSpreadBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COP -->
+      <div class="SubHeader">
+        <h2 class="SubHeader-title">🇨🇴 Peso Colombiano</h2>
+        <span class="SubHeader-badge" id="copSourceBadge">API</span>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-1">
+              <span class="Label Label--success">COP</span>
+              <span class="text-small text-muted" id="mCopSource">API</span>
+            </div>
+            <div class="text-large text-bold" id="mCop" style="font-size:28px">Cargando...</div>
+            <div class="text-small text-muted">COP/USD</div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="text-small text-muted mb-1">Invertido</div>
+            <div class="text-large text-bold" id="mCopInv">—</div>
+            <div class="text-small text-muted">USD/COP</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 2: COLCHÓN ===================== -->
+    <section class="section" id="sec-colchon" role="tabpanel" aria-labelledby="tab-colchon">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>Calculadora de colchón anti-devaluación.</strong> Proyecta la tasa con interés compuesto para proteger tus precios.
+      </div>
+
+      <div class="Box mb-4">
+        <div class="Box-header"><h2>🏛️ Proyección BCV</h2></div>
+        <div class="Box-body">
+          <div class="grid-3">
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBcvTasa">Tasa BCV actual (Bs/USD)</label>
+              <input type="number" class="FormControl-input" id="cBcvTasa" step="0.01" oninput="window.calcColchonBcv(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBcvPct">% Devaluación diaria</label>
+              <input type="number" class="FormControl-input" id="cBcvPct" value="0.6" step="0.01" oninput="window.calcColchonBcv(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBcvDias">Días a proyectar</label>
+              <input type="number" class="FormControl-input" id="cBcvDias" value="7" min="1" step="1" oninput="window.calcColchonBcv(); window.autoSaveDebounced()">
+            </div>
+          </div>
+          <div class="grid-2 mt-3">
+            <div class="Box" style="background:var(--color-canvas-default)">
+              <div class="Box-body">
+                <div class="text-small text-muted">Tasa proyectada</div>
+                <div class="text-large text-bold text-accent" id="cBcvResult">—</div>
+                <div class="text-small text-muted">Bs/USD en <span id="cBcvDiasLabel">7</span> días</div>
+              </div>
+            </div>
+            <div class="Box" style="background:var(--color-canvas-default)">
+              <div class="Box-body">
+                <div class="text-small text-muted">Colchón total</div>
+                <div class="text-large text-bold text-success" id="cBcvColchon">—</div>
+                <div class="text-small text-muted">% de protección recomendado</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 p-3" style="background:var(--color-canvas-inset);border-radius:var(--radius-medium)">
+            <div class="text-small text-muted mb-1">Fórmula aplicada</div>
+            <code class="text-mono text-accent" id="cBcvFormula">—</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="Box mb-4">
+        <div class="Box-header"><h2>💱 Proyección Binance P2P</h2></div>
+        <div class="Box-body">
+          <div class="grid-3">
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBnbTasa">Tasa Binance promedio (Bs/USDT)</label>
+              <input type="number" class="FormControl-input" id="cBnbTasa" step="0.01" oninput="window.calcColchonBnb(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBnbPct">% Devaluación diaria P2P</label>
+              <input type="number" class="FormControl-input" id="cBnbPct" value="0.6" step="0.01" oninput="window.calcColchonBnb(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="cBnbDias">Días a proyectar</label>
+              <input type="number" class="FormControl-input" id="cBnbDias" value="7" min="1" step="1" oninput="window.calcColchonBnb(); window.autoSaveDebounced()">
+            </div>
+          </div>
+          <div class="grid-2 mt-3">
+            <div class="Box" style="background:var(--color-canvas-default)">
+              <div class="Box-body">
+                <div class="text-small text-muted">Tasa proyectada</div>
+                <div class="text-large text-bold text-accent" id="cBnbResult">—</div>
+                <div class="text-small text-muted">Bs/USDT en <span id="cBnbDiasLabel">7</span> días</div>
+              </div>
+            </div>
+            <div class="Box" style="background:var(--color-canvas-default)">
+              <div class="Box-body">
+                <div class="text-small text-muted">Colchón total</div>
+                <div class="text-large text-bold text-success" id="cBnbColchon">—</div>
+                <div class="text-small text-muted">% de protección recomendado</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 p-3" style="background:var(--color-canvas-inset);border-radius:var(--radius-medium)">
+            <div class="text-small text-muted mb-1">Fórmula aplicada</div>
+            <code class="text-mono text-accent" id="cBnbFormula">—</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 3: DIVISIÓN ===================== -->
+    <section class="section" id="sec-division" role="tabpanel" aria-labelledby="tab-division">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>Tasas de división (COP → Bs).</strong> Divide COP/USD entre la tasa en bolívares para obtener la tasa de conversión de productos.
+      </div>
+      <div class="Box mb-4">
+        <div class="Box-header"><h2>🔄 Configuración</h2></div>
+        <div class="Box-body">
+          <div class="grid-3">
+            <div class="FormControl">
+              <label class="FormControl-label" for="dCop">COP por 1 USD</label>
+              <input type="number" class="FormControl-input" id="dCop" value="3200" step="0.01" oninput="window.calcDivision(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="dBcv">Tasa BCV con colchón (Bs/USD)</label>
+              <input type="number" class="FormControl-input" id="dBcv" step="0.01" oninput="window.calcDivision(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="dBnb">Tasa Binance con colchón (Bs/USDT)</label>
+              <input type="number" class="FormControl-input" id="dBnb" step="0.01" oninput="window.calcDivision(); window.autoSaveDebounced()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-2">
+              <span class="Label Label--accent">BCV</span>
+              <span class="text-small text-muted">Tasa de división</span>
+            </div>
+            <div class="text-large text-bold" id="dBcvResult">—</div>
+            <div class="text-small text-muted">COP ÷ Bs</div>
+            <div class="mt-2 p-2" style="background:var(--color-canvas-inset);border-radius:var(--radius-small)">
+              <span class="text-small text-muted" id="dBcvEjemplo">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="Box">
+          <div class="Box-body">
+            <div class="d-flex justify-between align-center mb-2">
+              <span class="Label Label--attention">BINANCE</span>
+              <span class="text-small text-muted">Tasa de división</span>
+            </div>
+            <div class="text-large text-bold" id="dBnbResult">—</div>
+            <div class="text-small text-muted">COP ÷ Bs</div>
+            <div class="mt-2 p-2" style="background:var(--color-canvas-inset);border-radius:var(--radius-small)">
+              <span class="text-small text-muted" id="dBnbEjemplo">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 4: PRODUCTOS ===================== -->
+    <section class="section" id="sec-productos" role="tabpanel" aria-labelledby="tab-productos">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>Mis productos.</strong> Agrega productos con costo en COP y % de ganancia. El sistema calcula el precio en Bs.
+      </div>
+      <div class="Box mb-4">
+        <div class="Box-header"><h2>➕ Agregar producto</h2></div>
+        <div class="Box-body">
+          <div class="grid-4" style="align-items:end">
+            <div class="FormControl">
+              <label class="FormControl-label" for="pNombre">Nombre</label>
+              <input type="text" class="FormControl-input" id="pNombre" placeholder="Ej: Aceite 1L">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="pCosto">Costo (COP)</label>
+              <input type="number" class="FormControl-input" id="pCosto" placeholder="3200" min="0">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="pGanancia">% Ganancia</label>
+              <input type="number" class="FormControl-input" id="pGanancia" placeholder="15" min="0" step="0.1">
+            </div>
+            <button class="Btn Btn-primary" onclick="window.addProducto()" style="height:32px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/></svg>
+              Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-between align-center mb-2 flex-wrap gap-2">
+        <div class="d-flex align-center gap-2">
+          <label for="pTasaTipo" class="text-small text-muted">Tasa:</label>
+          <select class="FormControl-select" id="pTasaTipo" onchange="window.renderProductos(); window.autoSaveDebounced()" style="width:auto">
+            <option value="bcv">BCV (con colchón)</option>
+            <option value="bnb">Binance P2P (con colchón)</option>
+          </select>
+          <div class="FormControl" style="margin:0">
+            <input type="text" class="FormControl-input" id="pTasaValor" readonly style="width:140px" placeholder="Tasa div">
+          </div>
+        </div>
+        <button class="Btn Btn-danger Btn-sm" onclick="window.clearProductos()">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg>
+          Borrar todos
+        </button>
+      </div>
+      <div class="Box">
+        <div style="overflow-x:auto">
+          <table class="DataTable">
+            <thead>
+              <tr><th>Producto</th><th>Costo (COP)</th><th>% Ganancia</th><th>Precio COP</th><th>Precio Bs</th><th style="width:40px"></th></tr>
+            </thead>
+            <tbody id="productosTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 5: HISTORIAL (PROYECCIONES) ===================== -->
+    <section class="section" id="sec-historial" role="tabpanel" aria-labelledby="tab-historial">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>Historial y proyecciones.</strong> Los valores pasados se estiman con la fórmula inversa del interés compuesto.
+      </div>
+      <div class="Box mb-4">
+        <div class="Box-header"><h2>⚙️ Configuración de devaluación</h2></div>
+        <div class="Box-body">
+          <div class="grid-2">
+            <div class="FormControl">
+              <label class="FormControl-label" for="hBcvPct">% Devaluación diaria BCV</label>
+              <input type="number" class="FormControl-input" id="hBcvPct" value="0.6" step="0.01" oninput="window.calcHistorial(); window.autoSaveDebounced()">
+            </div>
+            <div class="FormControl">
+              <label class="FormControl-label" for="hBnbPct">% Devaluación diaria P2P</label>
+              <input type="number" class="FormControl-input" id="hBnbPct" value="0.6" step="0.01" oninput="window.calcHistorial(); window.autoSaveDebounced()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="SubHeader"><h2 class="SubHeader-title">🏛️ BCV — Evolución</h2></div>
+      <div class="grid-3 mb-4">
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Hace 1 mes (est.)</div><div class="text-large text-bold" id="hBcv1m">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Hace 1 semana (est.)</div><div class="text-large text-bold" id="hBcv1s">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Ayer</div><div class="text-large text-bold" id="hBcvAyer">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+        <div class="Box" style="border:1px solid var(--color-accent-emphasis)"><div class="Box-body"><div class="text-small text-muted">🎯 Hoy</div><div class="text-large text-bold text-accent" id="hBcvHoy">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Proy. 1 semana</div><div class="text-large text-bold" id="hBcvP1s">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Proy. 1 mes</div><div class="text-large text-bold" id="hBcvP1m">—</div><div class="text-small text-muted">Bs/USD</div></div></div>
+      </div>
+
+      <div class="SubHeader"><h2 class="SubHeader-title">💱 Binance P2P — Evolución</h2></div>
+      <div class="grid-3 mb-4">
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Hace 1 mes (est.)</div><div class="text-large text-bold" id="hBnb1m">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Hace 1 semana (est.)</div><div class="text-large text-bold" id="hBnb1s">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Ayer</div><div class="text-large text-bold" id="hBnbAyer">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+        <div class="Box" style="border:1px solid var(--color-attention-emphasis)"><div class="Box-body"><div class="text-small text-muted">🎯 Hoy</div><div class="text-large text-bold text-attention" id="hBnbHoy">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Proy. 1 semana</div><div class="text-large text-bold" id="hBnbP1s">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">Proy. 1 mes</div><div class="text-large text-bold" id="hBnbP1m">—</div><div class="text-small text-muted">Bs/USDT</div></div></div>
+      </div>
+
+      <div class="SubHeader"><h2 class="SubHeader-title">📊 Incrementos acumulados</h2></div>
+      <div class="grid-2">
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">BCV — Incremento mensual</div><div class="text-large text-bold text-success" id="hBcvIncM">—</div><div class="text-small text-muted">% en 30 días</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">P2P — Incremento mensual</div><div class="text-large text-bold text-success" id="hBnbIncM">—</div><div class="text-small text-muted">% en 30 días</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">BCV — Incremento semanal</div><div class="text-large text-bold" id="hBcvIncS">—</div><div class="text-small text-muted">% en 7 días</div></div></div>
+        <div class="Box"><div class="Box-body"><div class="text-small text-muted">P2P — Incremento semanal</div><div class="text-large text-bold" id="hBnbIncS">—</div><div class="text-small text-muted">% en 7 días</div></div></div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 6: HISTORIAL BCV (NUEVA) ===================== -->
+    <section class="section" id="sec-historial-bcv" role="tabpanel" aria-labelledby="tab-historial-bcv">
+      <div class="Flash Flash--info mb-3" role="alert">
+        <strong>📈 Historial completo de tasas BCV</strong> obtenido de <a href="https://finanzasdigital.com/tasa-de-cambio-dolar-diaria/" target="_blank" rel="noopener">finanzasdigital.com</a> mediante proxy. Se actualiza cada vez que recargas o pulsas el botón.
+      </div>
+
+      <div class="d-flex justify-between align-center mb-3 flex-wrap gap-2">
+        <div>
+          <button class="Btn Btn-sm Btn-primary" onclick="window.fetchHistorialBcv()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.746 5.5 5.5 0 0 0-2.483-8.63.75.75 0 1 1 .704-1.326 7 7 0 0 1-3.458 12.68 7 7 0 0 1-12.19-3.495.75.75 0 0 1 .656-.834Zm5.293-4.003a.75.75 0 0 1 .75.75v2.69l1.28-1.28a.75.75 0 1 1 1.06 1.061l-2.5 2.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 0 1 1.06-1.06l1.28 1.28V4.752a.75.75 0 0 1 .75-.75Z"/></svg>
+            Actualizar historial
+          </button>
+          <span class="text-small text-muted ml-2" id="histBcvLastUpdate">—</span>
+        </div>
+        <span class="text-small text-muted" id="histBcvRowCount">0 filas</span>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="stats-grid" id="histBcvStats">
+        <div class="stat-card"><div class="stat-label">Promedio</div><div class="stat-value" id="statPromedio">—</div></div>
+        <div class="stat-card"><div class="stat-label">Máximo</div><div class="stat-value text-danger" id="statMaximo">—</div></div>
+        <div class="stat-card"><div class="stat-label">Mínimo</div><div class="stat-value text-success" id="statMinimo">—</div></div>
+        <div class="stat-card"><div class="stat-label">Variación media</div><div class="stat-value" id="statVariacionMedia">—</div></div>
+        <div class="stat-card"><div class="stat-label">Última tasa</div><div class="stat-value text-accent" id="statUltima">—</div></div>
+        <div class="stat-card"><div class="stat-label">Fecha última</div><div class="stat-value text-small" id="statFechaUltima">—</div></div>
+      </div>
+
+      <!-- Tabla con scroll -->
+      <div class="Box">
+        <div class="Box-header">
+          <h2>📋 Registro histórico</h2>
+          <span class="Label Label--neutral" id="histBcvOrdenLabel">Antiguo → Reciente</span>
+        </div>
+        <div class="DataTable-container">
+          <table class="DataTable" id="histBcvTable">
+            <thead>
+              <tr>
+                <th style="width:30%">Fecha</th>
+                <th style="width:40%">Tasa (Bs/USD)</th>
+                <th style="width:30%">Variación</th>
+              </tr>
+            </thead>
+            <tbody id="histBcvTbody">
+              <tr><td colspan="3" class="text-center text-muted" style="padding:40px 0">Cargando historial...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p class="text-small text-muted" id="footerText">Sistema de Gestión — Puerto Ayacucho · Fuentes: BCV / usdt.com.ve / yadio.io / exchangerate-api.com</p>
+      <p class="text-small text-muted mt-1">Diseñado con la estética de <a href="https://primer.style" target="_blank" rel="noopener">GitHub Primer</a></p>
+    </div>
+  </footer>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div class="Toast-container" id="toastContainer" role="status" aria-live="polite"></div>
+
+  <!-- ===================== WORKSPACE MODAL ===================== -->
+  <div class="Overlay" id="workspaceModal" role="dialog" aria-modal="true" aria-labelledby="workspaceModalTitle">
+    <div class="Overlay-body">
+      <div class="Overlay-header">
+        <h3 id="workspaceModalTitle">🔐 Workspace colaborativo</h3>
+        <button class="Btn Btn-invisible Btn-sm" onclick="window.hideWorkspaceModal()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="Overlay-content">
+        <div class="Flash Flash--info mb-3">
+          <strong>Modo local:</strong> Todo se guarda en tu navegador. Nadie más puede ver tus datos.<br>
+          <strong>Modo compartido:</strong> Sincroniza en tiempo real con otras personas usando Firebase.
+        </div>
+
+        <div class="FormControl mb-3">
+          <label class="FormControl-label">Modo actual</label>
+          <div class="d-flex gap-2 mt-1">
+            <span class="Label Label--neutral" id="modalCurrentMode">Local</span>
+            <span class="text-small text-muted" id="modalRoomId">—</span>
+          </div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--color-border-default);margin:16px 0">
+
+        <h4 class="text-medium text-bold mb-2">Crear o unirse a un workspace</h4>
+        <div class="FormControl mb-2">
+          <label class="FormControl-label" for="roomIdInput">ID del workspace</label>
+          <input type="text" class="FormControl-input" id="roomIdInput" placeholder="Ej: puerto-ayacucho-01">
+          <span class="FormControl-caption">Dejar vacío para generar uno automáticamente</span>
+        </div>
+        <div class="FormControl mb-3">
+          <label class="FormControl-label" for="roomPasswordInput">Contraseña (opcional)</label>
+          <input type="password" class="FormControl-input" id="roomPasswordInput" placeholder="Mínimo 4 caracteres">
+          <span class="FormControl-caption">Protege el workspace para que solo quien tenga la contraseña pueda modificarlo</span>
+        </div>
+
+        <div class="FormControl mb-3">
+          <label class="FormControl-label" for="firebaseConfigInput">Configuración Firebase (opcional)</label>
+          <textarea class="FormControl-input" id="firebaseConfigInput" rows="4" placeholder='{"apiKey":"...","databaseURL":"..."}'></textarea>
+          <span class="FormControl-caption">Pega aquí la configuración de tu proyecto Firebase para sincronización en tiempo real. <a href="#" onclick="window.showFirebaseHelp();return false">¿Cómo obtener?</a></span>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="Btn Btn-primary" onclick="window.createOrJoinRoom()">Crear / Unirse</button>
+          <button class="Btn" onclick="window.disconnectRoom()">Desconectar</button>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--color-border-default);margin:16px 0">
+
+        <h4 class="text-medium text-bold mb-2">Exportar / Importar</h4>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="Btn Btn-sm" onclick="window.exportData()">📥 Exportar JSON</button>
+          <button class="Btn Btn-sm" onclick="document.getElementById('importFile').click()">📤 Importar JSON</button>
+          <input type="file" id="importFile" style="display:none" accept=".json" onchange="window.importData(this)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FIREBASE HELP MODAL ===================== -->
+  <div class="Overlay" id="firebaseHelpModal" role="dialog" aria-modal="true" aria-labelledby="firebaseHelpTitle">
+    <div class="Overlay-body">
+      <div class="Overlay-header">
+        <h3 id="firebaseHelpTitle">🔥 Configurar Firebase</h3>
+        <button class="Btn Btn-invisible Btn-sm" onclick="window.hideFirebaseHelp()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="Overlay-content">
+        <ol style="padding-left:20px;line-height:2;color:var(--color-fg-default)">
+          <li>Ve a <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a></li>
+          <li>Crea un proyecto nuevo (gratis)</li>
+          <li>Ve a <strong>Build → Realtime Database</strong> y crea una base de datos</li>
+          <li>En <strong>Reglas</strong>, cambia a:<br><code style="font-size:11px">{"rules":{".read":true,".write":true}}</code></li>
+          <li>Ve a <strong>Project Settings</strong> → pestaña <strong>General</strong></li>
+          <li>En <strong>Your apps</strong>, haz clic en el icono <code>&lt;/&gt;</code></li>
+          <li>Copia el objeto de configuración y pégalo arriba</li>
+        </ol>
+        <div class="Flash Flash--warning mt-2">
+          ⚠️ Las reglas <code>.write: true</code> permiten que cualquiera escriba. Para producción, usa autenticación.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ================================================================
+    // MÓDULO PRINCIPAL — Toda la lógica en un scope aislado
+    // ================================================================
+    (() => {
+      'use strict';
+
+      // ---------- CONSTANTS ----------
+      const SETTINGS_KEY = 'vzla_settings_v3';
+      const PRODUCTOS_KEY = 'productos_vzla_v2';
+      const HIST_BCV_KEY = 'hist_bcv_v2';
+      const HIST_BNB_KEY = 'hist_bnb_v2';
+      const WORKSPACE_KEY = 'vzla_workspace_v2';
+
+      const API_BCV = 'https://rates.dolarvzla.com/bcv/current.json';
+      const API_P2P_PRIMARY = 'https://usdt.com.ve/api/rates';
+      const API_P2P_YADIO_STATS_BUY = 'https://yadio.io/market/stats?currency=VES&asset=USDT&side=buy';
+      const API_P2P_YADIO_STATS_SELL = 'https://yadio.io/market/stats?currency=VES&asset=USDT&side=sell';
+      const API_P2P_YADIO_ADS = 'https://yadio.io/market/ads?currency=VES&asset=USDT&side=buy&limit=50';
+      const API_COP = 'https://api.exchangerate-api.com/v4/latest/USD';
+
+      // ---------- STATE ----------
+      const rates = {
+        bcvUsd: 0, bcvEur: 0, bcvPrev: 0,
+        bnbBuy: 0, bnbSell: 0, bybBuy: 0, bybSell: 0,
+        bnbAvg: 0, cop: 0,
+        p2pSource: '', bcvSource: '', copSource: ''
+      };
+      let autoInterval = null;
+      let isAuto = false;
+      let autoSaveTimer = null;
+      let isSyncingFromRemote = false;
+
+      // Firebase state
+      let firebaseApp = null;
+      let firebaseDb = null;
+      let currentRoom = null;
+      let roomPasswordHash = null;
+      const unsubscribers = [];
+
+      // ---------- DOM HELPERS ----------
+      const $ = (id) => document.getElementById(id);
+      const fmt = (n, d = 2) => {
+        if (n === null || n === undefined || isNaN(n)) return '—';
+        return n.toLocaleString('es-VE', { minimumFractionDigits: d, maximumFractionDigits: d });
+      };
+      const fmt4 = (n) => fmt(n, 4);
+
+      // ---------- TOAST SYSTEM ----------
+      const toastContainer = $('toastContainer');
+      function showToast(text, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `Toast Toast--${type}`;
+        toast.textContent = text;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          if (toast.parentNode) toast.remove();
+        }, 3000);
+      }
+      window.showToast = showToast;
+
+      // ---------- STORAGE ----------
+      function getSettings() {
+        try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); }
+        catch { return {}; }
+      }
+      function setSettings(obj) {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj));
+      }
+      function getProductos() {
+        try { return JSON.parse(localStorage.getItem(PRODUCTOS_KEY) || '[]'); }
+        catch { return []; }
+      }
+      function saveProductos(list) {
+        localStorage.setItem(PRODUCTOS_KEY, JSON.stringify(list));
+      }
+      function getWorkspace() {
+        try { return JSON.parse(localStorage.getItem(WORKSPACE_KEY) || '{}'); }
+        catch { return {}; }
+      }
+      function setWorkspace(obj) {
+        localStorage.setItem(WORKSPACE_KEY, JSON.stringify(obj));
+      }
+      function saveToHistory(key, value) {
+        try {
+          const histKey = key === 'bcv' ? HIST_BCV_KEY : HIST_BNB_KEY;
+          const hist = JSON.parse(localStorage.getItem(histKey) || '[]');
+          hist.push({ date: new Date().toISOString(), value });
+          if (hist.length > 100) hist.shift();
+          localStorage.setItem(histKey, JSON.stringify(hist));
+        } catch {}
+      }
+
+      // ---------- FIREBASE HELPERS ----------
+      async function initFirebase(configObj) {
+        if (!window._fb) {
+          showToast('❌ Firebase no disponible', 'error');
+          return false;
+        }
+        try {
+          firebaseApp = window._fb.initializeApp(configObj);
+          firebaseDb = window._fb.getDatabase(firebaseApp);
+          return true;
+        } catch (e) {
+          console.error('Firebase init error:', e);
+          showToast('❌ Error al conectar Firebase', 'error');
+          return false;
+        }
+      }
+
+      async function hashPassword(password) {
+        if (!password) return '';
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      function buildDataPayload() {
+        return {
+          manualBcv: $('manualBcv').value,
+          manualBnbBuy: $('manualBnbBuy').value,
+          manualBnbSell: $('manualBnbSell').value,
+          manualCop: $('manualCop').value,
+          cBcvTasa: $('cBcvTasa').value,
+          cBcvPct: $('cBcvPct').value,
+          cBcvDias: $('cBcvDias').value,
+          cBnbTasa: $('cBnbTasa').value,
+          cBnbPct: $('cBnbPct').value,
+          cBnbDias: $('cBnbDias').value,
+          dCop: $('dCop').value,
+          dBcv: $('dBcv').value,
+          dBnb: $('dBnb').value,
+          hBcvPct: $('hBcvPct').value,
+          hBnbPct: $('hBnbPct').value,
+          pTasaTipo: $('pTasaTipo').value,
+          products: getProductos(),
+          rates: {
+            bcvUsd: rates.bcvUsd,
+            bnbBuy: rates.bnbBuy,
+            bnbSell: rates.bnbSell,
+            bnbAvg: rates.bnbAvg,
+            cop: rates.cop
+          },
+          updatedAt: Date.now()
+        };
+      }
+
+      function applyRemoteData(data) {
+        if (!data) return;
+        isSyncingFromRemote = true;
+        try {
+          if (data.manualBcv !== undefined) $('manualBcv').value = data.manualBcv || '';
+          if (data.manualBnbBuy !== undefined) $('manualBnbBuy').value = data.manualBnbBuy || '';
+          if (data.manualBnbSell !== undefined) $('manualBnbSell').value = data.manualBnbSell || '';
+          if (data.manualCop !== undefined) $('manualCop').value = data.manualCop || '';
+          if (data.cBcvTasa !== undefined) $('cBcvTasa').value = data.cBcvTasa || '';
+          if (data.cBcvPct !== undefined) $('cBcvPct').value = data.cBcvPct || '';
+          if (data.cBcvDias !== undefined) $('cBcvDias').value = data.cBcvDias || '';
+          if (data.cBnbTasa !== undefined) $('cBnbTasa').value = data.cBnbTasa || '';
+          if (data.cBnbPct !== undefined) $('cBnbPct').value = data.cBnbPct || '';
+          if (data.cBnbDias !== undefined) $('cBnbDias').value = data.cBnbDias || '';
+          if (data.dCop !== undefined) $('dCop').value = data.dCop || '';
+          if (data.dBcv !== undefined) $('dBcv').value = data.dBcv || '';
+          if (data.dBnb !== undefined) $('dBnb').value = data.dBnb || '';
+          if (data.hBcvPct !== undefined) $('hBcvPct').value = data.hBcvPct || '';
+          if (data.hBnbPct !== undefined) $('hBnbPct').value = data.hBnbPct || '';
+          if (data.pTasaTipo !== undefined) $('pTasaTipo').value = data.pTasaTipo || 'bcv';
+          if (data.products) saveProductos(data.products);
+          if (data.rates) Object.assign(rates, data.rates);
+          // Recalculate
+          calcColchonBcv();
+          calcColchonBnb();
+          calcDivision();
+          calcHistorial();
+          renderProductos();
+          updateMonitor(null);
+        } finally {
+          setTimeout(() => { isSyncingFromRemote = false; }, 500);
+        }
+      }
+
+      async function syncToFirebase() {
+        if (isSyncingFromRemote || !currentRoom || !firebaseDb || !window._fb) return;
+        try {
+          const roomRef = window._fb.ref(firebaseDb, `rooms/${currentRoom}/data`);
+          await window._fb.set(roomRef, buildDataPayload());
+        } catch (e) {
+          console.error('Sync error:', e);
+        }
+      }
+
+      function subscribeToRoom(roomId) {
+        if (!window._fb || !firebaseDb) return;
+        // Unsubscribe previous
+        for (const u of unsubscribers) if (u) u();
+        unsubscribers.length = 0;
+
+        const roomRef = window._fb.ref(firebaseDb, `rooms/${roomId}/data`);
+        const unsub = window._fb.onValue(roomRef, (snapshot) => {
+          if (!snapshot.exists()) return;
+          const data = snapshot.val();
+          applyRemoteData(data);
+        });
+        unsubscribers.push(unsub);
+      }
+
+      async function createOrJoinRoom() {
+        const roomId = $('roomIdInput').value.trim() || 'room-' + Math.random().toString(36).substr(2, 9);
+        const password = $('roomPasswordInput').value;
+        const configText = $('firebaseConfigInput').value.trim();
+
+        let configObj = null;
+        if (configText) {
+          try { configObj = JSON.parse(configText); }
+          catch { showToast('❌ Configuración Firebase inválida', 'error'); return; }
+        } else {
+          const ws = getWorkspace();
+          if (ws.firebaseConfig) configObj = ws.firebaseConfig;
+        }
+        if (!configObj) {
+          showToast('⚠️ Ingresa la configuración de Firebase o usa modo local', 'warning');
+          return;
+        }
+
+        const ok = await initFirebase(configObj);
+        if (!ok) return;
+
+        // Save config
+        const ws = getWorkspace();
+        ws.firebaseConfig = configObj;
+        ws.roomId = roomId;
+        setWorkspace(ws);
+
+        const hash = await hashPassword(password);
+        roomPasswordHash = hash;
+
+        const roomRef = window._fb.ref(firebaseDb, `rooms/${roomId}`);
+        const snapshot = await window._fb.get(roomRef);
+
+        if (snapshot.exists()) {
+          const roomData = snapshot.val();
+          if (roomData.passwordHash && roomData.passwordHash !== hash) {
+            showToast('❌ Contraseña incorrecta', 'error');
+            disconnectRoom();
+            return;
+          }
+          currentRoom = roomId;
+          subscribeToRoom(roomId);
+          showToast(`✅ Conectado al workspace: ${roomId}`, 'success');
+        } else {
+          currentRoom = roomId;
+          await window._fb.set(roomRef, {
+            passwordHash: hash,
+            createdAt: Date.now(),
+            data: buildDataPayload()
+          });
+          subscribeToRoom(roomId);
+          showToast(`✅ Workspace creado: ${roomId}`, 'success');
+        }
+        updateWorkspaceUI();
+        hideWorkspaceModal();
+      }
+
+      function disconnectRoom() {
+        for (const u of unsubscribers) if (u) u();
+        unsubscribers.length = 0;
+        currentRoom = null;
+        firebaseApp = null;
+        firebaseDb = null;
+        const ws = getWorkspace();
+        ws.roomId = null;
+        setWorkspace(ws);
+        updateWorkspaceUI();
+        showToast('🔌 Desconectado del workspace', 'info');
+      }
+
+      function updateWorkspaceUI() {
+        const status = $('connStatus');
+        const pulse = $('connPulse');
+        const text = $('connText');
+        const name = $('workspaceName');
+
+        if (currentRoom && firebaseDb) {
+          status.className = 'WorkspaceBar-status online';
+          pulse.className = 'WorkspaceBar-pulse online';
+          text.textContent = 'En vivo';
+          name.textContent = `Workspace: ${currentRoom}`;
+          $('modalCurrentMode').textContent = 'Compartido';
+          $('modalCurrentMode').className = 'Label Label--success';
+          $('modalRoomId').textContent = currentRoom;
+        } else {
+          status.className = 'WorkspaceBar-status local';
+          pulse.className = 'WorkspaceBar-pulse';
+          text.textContent = 'Modo local';
+          name.textContent = 'Solo tú puedes ver estos datos';
+          $('modalCurrentMode').textContent = 'Local';
+          $('modalCurrentMode').className = 'Label Label--neutral';
+          $('modalRoomId').textContent = '—';
+        }
+      }
+
+      function showWorkspaceModal() {
+        const ws = getWorkspace();
+        if (ws.firebaseConfig) {
+          $('firebaseConfigInput').value = JSON.stringify(ws.firebaseConfig, null, 2);
+        }
+        if (ws.roomId) $('roomIdInput').value = ws.roomId;
+        updateWorkspaceUI();
+        $('workspaceModal').classList.add('visible');
+      }
+      function hideWorkspaceModal() { $('workspaceModal').classList.remove('visible'); }
+      function showFirebaseHelp() { $('firebaseHelpModal').classList.add('visible'); }
+      function hideFirebaseHelp() { $('firebaseHelpModal').classList.remove('visible'); }
+
+      // Expose globally for inline onclick
+      window.createOrJoinRoom = createOrJoinRoom;
+      window.disconnectRoom = disconnectRoom;
+      window.showWorkspaceModal = showWorkspaceModal;
+      window.hideWorkspaceModal = hideWorkspaceModal;
+      window.showFirebaseHelp = showFirebaseHelp;
+      window.hideFirebaseHelp = hideFirebaseHelp;
+
+      // ---------- SAVE/LOAD SETTINGS ----------
+      function saveAllSettings() {
+        const s = getSettings();
+        s.manualBcv = $('manualBcv').value;
+        s.manualBnbBuy = $('manualBnbBuy').value;
+        s.manualBnbSell = $('manualBnbSell').value;
+        s.manualCop = $('manualCop').value;
+        s.cBcvTasa = $('cBcvTasa').value;
+        s.cBcvPct = $('cBcvPct').value;
+        s.cBcvDias = $('cBcvDias').value;
+        s.cBnbTasa = $('cBnbTasa').value;
+        s.cBnbPct = $('cBnbPct').value;
+        s.cBnbDias = $('cBnbDias').value;
+        s.dCop = $('dCop').value;
+        s.dBcv = $('dBcv').value;
+        s.dBnb = $('dBnb').value;
+        s.hBcvPct = $('hBcvPct').value;
+        s.hBnbPct = $('hBnbPct').value;
+        s.pTasaTipo = $('pTasaTipo').value;
+        setSettings(s);
+        syncToFirebase();
+        showToast('💾 Ajustes guardados', 'success');
+      }
+
+      function loadAllSettings() {
+        const s = getSettings();
+        if (!s || Object.keys(s).length === 0) {
+          showToast('⚠️ No hay ajustes guardados', 'warning');
+          return;
+        }
+        if (s.manualBcv !== undefined) $('manualBcv').value = s.manualBcv;
+        if (s.manualBnbBuy !== undefined) $('manualBnbBuy').value = s.manualBnbBuy;
+        if (s.manualBnbSell !== undefined) $('manualBnbSell').value = s.manualBnbSell;
+        if (s.manualCop !== undefined) $('manualCop').value = s.manualCop;
+        if (s.cBcvTasa !== undefined) $('cBcvTasa').value = s.cBcvTasa;
+        if (s.cBcvPct !== undefined) $('cBcvPct').value = s.cBcvPct;
+        if (s.cBcvDias !== undefined) $('cBcvDias').value = s.cBcvDias;
+        if (s.cBnbTasa !== undefined) $('cBnbTasa').value = s.cBnbTasa;
+        if (s.cBnbPct !== undefined) $('cBnbPct').value = s.cBnbPct;
+        if (s.cBnbDias !== undefined) $('cBnbDias').value = s.cBnbDias;
+        if (s.dCop !== undefined) $('dCop').value = s.dCop;
+        if (s.dBcv !== undefined) $('dBcv').value = s.dBcv;
+        if (s.dBnb !== undefined) $('dBnb').value = s.dBnb;
+        if (s.hBcvPct !== undefined) $('hBcvPct').value = s.hBcvPct;
+        if (s.hBnbPct !== undefined) $('hBnbPct').value = s.hBnbPct;
+        if (s.pTasaTipo !== undefined) $('pTasaTipo').value = s.pTasaTipo;
+        onManualChange();
+        calcColchonBcv();
+        calcColchonBnb();
+        calcDivision();
+        calcHistorial();
+        renderProductos();
+        showToast('🔄 Ajustes restaurados', 'info');
+      }
+
+      function autoSaveDebounced() {
+        if (autoSaveTimer) clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(saveAllSettings, 1500);
+      }
+
+      // Expose
+      window.saveAllSettings = saveAllSettings;
+      window.loadAllSettings = loadAllSettings;
+      window.autoSaveDebounced = autoSaveDebounced;
+
+      // ---------- EXPORT / IMPORT ----------
+      function exportData() {
+        const data = {
+          settings: getSettings(),
+          productos: getProductos(),
+          workspace: getWorkspace(),
+          exportDate: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gestion-puerto-ayacucho-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('📥 Datos exportados', 'success');
+      }
+
+      function importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.settings) setSettings(data.settings);
+            if (data.productos) saveProductos(data.productos);
+            if (data.workspace) setWorkspace(data.workspace);
+            loadAllSettings();
+            showToast('📤 Datos importados correctamente', 'success');
+          } catch {
+            showToast('❌ Archivo inválido', 'error');
+          }
+        };
+        reader.readAsText(file);
+        input.value = '';
+      }
+      window.exportData = exportData;
+      window.importData = importData;
+
+      // ---------- FETCH APIs ----------
+      async function fetchBCV() {
+        try {
+          const res = await fetch(API_BCV, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          rates.bcvUsd = data.current.usd;
+          rates.bcvEur = data.current.eur;
+          rates.bcvPrev = data.previous.usd;
+          rates.bcvSource = 'dolarvzla.com';
+          saveToHistory('bcv', rates.bcvUsd);
+          return data;
+        } catch (e) {
+          console.error('BCV error:', e);
+          return null;
+        }
+      }
+
+      async function fetchP2P() {
+        const manualBuy = parseFloat($('manualBnbBuy').value);
+        const manualSell = parseFloat($('manualBnbSell').value);
+
+        try {
+          const res = await fetch(API_P2P_PRIMARY, { cache: 'no-store', mode: 'cors' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const json = await res.json();
+          const d = json.data;
+          rates.bnbBuy = d.binance.buyRate;
+          rates.bnbSell = d.binance.sellRate;
+          rates.bybBuy = d.bybit.buyRate;
+          rates.bybSell = d.bybit.sellRate;
+          rates.bnbAvg = (rates.bnbBuy + rates.bnbSell) / 2;
+          rates.p2pSource = 'usdt.com.ve';
+          saveToHistory('bnb', rates.bnbAvg);
+          return { source: 'usdt.com.ve', data: json };
+        } catch (e1) {
+          console.warn('usdt.com.ve falló:', e1);
+          try {
+            const [resBuy, resSell] = await Promise.all([
+              fetch(API_P2P_YADIO_STATS_BUY, { cache: 'no-store', mode: 'cors' }),
+              fetch(API_P2P_YADIO_STATS_SELL, { cache: 'no-store', mode: 'cors' })
+            ]);
+            if (!resBuy.ok || !resSell.ok) throw new Error('HTTP stats');
+            const dataBuy = await resBuy.json();
+            const dataSell = await resSell.json();
+            const buyMean = dataBuy.stats?.mean || 0;
+            const sellMean = dataSell.stats?.mean || 0;
+            if (!buyMean || !sellMean) throw new Error('No VES stats');
+            rates.bnbBuy = buyMean;
+            rates.bnbSell = sellMean;
+            rates.bybBuy = buyMean;
+            rates.bybSell = sellMean;
+            rates.bnbAvg = (buyMean + sellMean) / 2;
+            rates.p2pSource = 'yadio.io';
+            saveToHistory('bnb', rates.bnbAvg);
+            return { source: 'yadio.io', data: { buy: dataBuy, sell: dataSell } };
+          } catch (e2) {
+            console.warn('Yadio stats falló:', e2);
+            try {
+              const resAds = await fetch(API_P2P_YADIO_ADS, { cache: 'no-store', mode: 'cors' });
+              if (!resAds.ok) throw new Error('HTTP ads');
+              const dataAds = await resAds.json();
+              const binancePrices = [];
+              if (dataAds.ads && Array.isArray(dataAds.ads)) {
+                for (const ad of dataAds.ads) {
+                  if (ad.exchange && ad.exchange.includes('Binance') && ad.price) {
+                    binancePrices.push(parseFloat(ad.price));
+                  }
+                }
+              }
+              if (binancePrices.length > 0) {
+                const avg = binancePrices.reduce((a,b) => a+b, 0) / binancePrices.length;
+                rates.bnbBuy = avg;
+                rates.bnbSell = avg;
+                rates.bybBuy = avg;
+                rates.bybSell = avg;
+                rates.bnbAvg = avg;
+                rates.p2pSource = 'yadio.io/ads';
+                saveToHistory('bnb', rates.bnbAvg);
+                return { source: 'yadio.io/ads', data: dataAds };
+              }
+              throw new Error('No Binance ads');
+            } catch (e3) {
+              console.error('Todas las APIs P2P fallaron:', e3);
+              if (manualBuy > 0 || manualSell > 0) {
+                rates.bnbBuy = manualBuy || manualSell || 0;
+                rates.bnbSell = manualSell || manualBuy || 0;
+                rates.bybBuy = rates.bnbBuy;
+                rates.bybSell = rates.bnbSell;
+                rates.bnbAvg = (rates.bnbBuy + rates.bnbSell) / 2;
+                rates.p2pSource = 'manual';
+                saveToHistory('bnb', rates.bnbAvg);
+                return { source: 'manual', data: null };
+              }
+              return null;
+            }
+          }
+        }
+      }
+
+      async function fetchCOP() {
+        try {
+          const res = await fetch(API_COP, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          rates.cop = data.rates.COP;
+          rates.copSource = 'exchangerate-api.com';
+          return data;
+        } catch (e) {
+          console.error('COP error:', e);
+          const manualCop = parseFloat($('manualCop').value);
+          if (manualCop > 0) {
+            rates.cop = manualCop;
+            rates.copSource = 'manual';
+            return { manual: true };
+          }
+          return null;
+        }
+      }
+
+      async function fetchAll() {
+        const refreshBtn = document.querySelector('.WorkspaceBar .Btn-primary');
+        if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.style.opacity = '0.6'; }
+
+        try {
+          const [bcvData, p2pData, copData] = await Promise.all([fetchBCV(), fetchP2P(), fetchCOP()]);
+
+          const manualBcv = parseFloat($('manualBcv').value);
+          const manualCop = parseFloat($('manualCop').value);
+          if (manualBcv > 0) { rates.bcvUsd = manualBcv; rates.bcvSource = 'manual'; }
+          if (manualCop > 0 && (!rates.cop || rates.cop <= 0)) { rates.cop = manualCop; rates.copSource = 'manual'; }
+
+          updateMonitor(bcvData);
+          updateColchonInputs();
+          calcColchonBcv();
+          calcColchonBnb();
+          calcDivision();
+          calcHistorial();
+          renderProductos();
+
+          const srcs = [];
+          if (rates.bcvSource) srcs.push(rates.bcvSource);
+          if (rates.p2pSource) srcs.push(rates.p2pSource);
+          if (rates.copSource) srcs.push(rates.copSource);
+          const updateStr = new Date().toLocaleString('es-VE');
+          $('lastUpdate').textContent = `Actualizado: ${updateStr}`;
+          $('footerText').innerHTML = `Sistema de Gestión — Puerto Ayacucho · ${updateStr} · Fuentes: ${srcs.join(' / ') || '—'}`;
+
+          syncToFirebase();
+        } catch (e) {
+          console.error('fetchAll error:', e);
+          showToast('❌ Error al actualizar datos', 'error');
+        } finally {
+          if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.style.opacity = '1'; }
+        }
+      }
+      window.fetchAll = fetchAll;
+
+      // ---------- UI MONITOR ----------
+      function updateMonitor(bcvData) {
+        if (bcvData && rates.bcvUsd > 0) {
+          const pctUsd = bcvData.changePercentage?.usd || 0;
+          const pctEur = bcvData.changePercentage?.eur || 0;
+          setCard('mBcvUsd', rates.bcvUsd, pctUsd, bcvData.previous?.date || 'ayer');
+          setCard('mBcvEur', rates.bcvEur, pctEur, bcvData.previous?.date || 'ayer');
+          setSourceBadge('bcvSourceBadge', rates.bcvSource);
+          setSourceText('mBcvUsdSource', rates.bcvSource);
+          setSourceText('mBcvEurSource', rates.bcvSource);
+        } else if (rates.bcvUsd > 0) {
+          setValue('mBcvUsd', rates.bcvUsd);
+          setValue('mBcvEur', rates.bcvEur || 0);
+          $('mBcvUsdDelta').textContent = '—';
+          $('mBcvUsdDelta').className = 'text-small text-muted';
+          $('mBcvEurDelta').textContent = '—';
+          $('mBcvEurDelta').className = 'text-small text-muted';
+          setSourceBadge('bcvSourceBadge', rates.bcvSource);
+          setSourceText('mBcvUsdSource', rates.bcvSource);
+          setSourceText('mBcvEurSource', rates.bcvSource);
+        }
+
+        if (rates.p2pSource) {
+          setValue('mBnbBuy', rates.bnbBuy);
+          setValue('mBnbSell', rates.bnbSell);
+          setValue('mBybBuy', rates.bybBuy);
+          setValue('mBybSell', rates.bybSell);
+          setValue('mBnbAvg', rates.bnbAvg);
+          setSourceBadge('p2pSourceBadge', rates.p2pSource);
+          setSourceText('mBnbBuySource', rates.p2pSource);
+          setSourceText('mBnbSellSource', rates.p2pSource);
+          setSourceText('mBybBuySource', rates.p2pSource);
+          setSourceText('mBybSellSource', rates.p2pSource);
+          setSourceText('mBnbAvgSource', rates.p2pSource);
+
+          if (rates.bcvUsd > 0 && rates.bnbAvg > 0) {
+            const diff = ((rates.bnbAvg - rates.bcvUsd) / rates.bcvUsd) * 100;
+            $('mDiff').textContent = fmt(diff) + '%';
+            const color = diff > 20 ? 'var(--color-danger-emphasis)' : diff > 10 ? 'var(--color-attention-emphasis)' : 'var(--color-success-emphasis)';
+            $('mSpreadBar').innerHTML = `<div class="Progress-item" style="width:${Math.min(Math.abs(diff)*2, 100)}%;background:${color}"></div>`;
+          }
+        }
+
+        if (rates.cop > 0) {
+          setValue('mCop', rates.cop);
+          setValue('mCopInv', 1 / rates.cop);
+          setSourceBadge('copSourceBadge', rates.copSource);
+          setSourceText('mCopSource', rates.copSource);
+        }
+      }
+
+      function setSourceBadge(id, source) {
+        const el = $(id);
+        if (!el) return;
+        const isManual = source === 'manual';
+        const isFallback = source && (source.includes('yadio') || source.includes('fallback'));
+        if (isManual) {
+          el.textContent = 'Manual';
+          el.style.background = 'var(--color-attention-subtle)';
+          el.style.color = 'var(--color-attention-fg)';
+        } else if (isFallback) {
+          el.textContent = 'Fallback';
+          el.style.background = 'var(--color-accent-subtle)';
+          el.style.color = 'var(--color-accent-fg)';
+        } else {
+          el.textContent = 'API';
+          el.style.background = '';
+          el.style.color = '';
+        }
+      }
+
+      function setSourceText(id, source) {
+        const el = $(id);
+        if (!el) return;
+        const isManual = source === 'manual';
+        const isFallback = source && (source.includes('yadio') || source.includes('fallback'));
+        const text = isManual ? 'Manual' : isFallback ? 'Fallback' : 'API';
+        el.textContent = `Fuente: ${text}`;
+        el.className = `text-small ${isManual ? 'text-attention' : isFallback ? 'text-accent' : 'text-muted'}`;
+      }
+
+      function setCard(idVal, val, pct, prevDate) {
+        const vEl = $(idVal);
+        const dEl = $(idVal + 'Delta');
+        vEl.textContent = fmt(val);
+        if (dEl) {
+          const sign = pct >= 0 ? '▲' : '▼';
+          dEl.innerHTML = `<span class="${pct >= 0 ? 'text-danger' : 'text-success'}">${sign} ${fmt(Math.abs(pct))}%</span> <span class="text-muted">vs ${prevDate || 'ayer'}</span>`;
+        }
+      }
+      function setValue(id, val) {
+        const el = $(id);
+        if (el) el.textContent = fmt(val);
+      }
+
+      function onManualChange() {
+        fetchAll();
+      }
+      window.onManualChange = onManualChange;
+
+      // ---------- NAV ----------
+      function showSection(name, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.UnderlineNav-item').forEach(t => t.setAttribute('aria-selected', 'false'));
+        const section = $(`sec-${name}`);
+        if (section) section.classList.add('active');
+        if (btn) btn.setAttribute('aria-selected', 'true');
+        if (name === 'productos') renderProductos();
+        if (name === 'historial') calcHistorial();
+        if (name === 'historial-bcv') fetchHistorialBcv(); // Carga bajo demanda
+      }
+      window.showSection = showSection;
+
+      // ---------- COLCHÓN ----------
+      function updateColchonInputs() {
+        const bcvTasa = $('cBcvTasa');
+        const bnbTasa = $('cBnbTasa');
+        if (rates.bcvUsd > 0 && (!bcvTasa.value || bcvTasa.dataset.auto === 'true')) {
+          bcvTasa.value = rates.bcvUsd;
+          bcvTasa.dataset.auto = 'true';
+        }
+        if (rates.bnbAvg > 0 && (!bnbTasa.value || bnbTasa.dataset.auto === 'true')) {
+          bnbTasa.value = rates.bnbAvg;
+          bnbTasa.dataset.auto = 'true';
+        }
+      }
+
+      function calcColchonBcv() {
+        const tasa = parseFloat($('cBcvTasa').value) || 0;
+        const pct = parseFloat($('cBcvPct').value) || 0;
+        const dias = parseInt($('cBcvDias').value) || 7;
+        if (!tasa || !pct) {
+          $('cBcvResult').textContent = '—';
+          $('cBcvColchon').textContent = '—';
+          $('cBcvFormula').textContent = '—';
+          return;
+        }
+        const factor = Math.pow(1 + pct / 100, dias);
+        const proyectada = tasa * factor;
+        const colchon = (factor - 1) * 100;
+        $('cBcvResult').textContent = fmt(proyectada);
+        $('cBcvColchon').textContent = fmt(colchon) + '%';
+        $('cBcvDiasLabel').textContent = dias;
+        $('cBcvFormula').innerHTML =
+          `${fmt(tasa)} × (1 + ${pct/100})<sup>${dias}</sup> = ${fmt(proyectada)} <span style="color:var(--color-fg-muted)">→ Colchón: ${fmt(colchon)}%</span>`;
+      }
+      window.calcColchonBcv = calcColchonBcv;
+
+      function calcColchonBnb() {
+        const tasa = parseFloat($('cBnbTasa').value) || 0;
+        const pct = parseFloat($('cBnbPct').value) || 0;
+        const dias = parseInt($('cBnbDias').value) || 7;
+        if (!tasa || !pct) {
+          $('cBnbResult').textContent = '—';
+          $('cBnbColchon').textContent = '—';
+          $('cBnbFormula').textContent = '—';
+          return;
+        }
+        const factor = Math.pow(1 + pct / 100, dias);
+        const proyectada = tasa * factor;
+        const colchon = (factor - 1) * 100;
+        $('cBnbResult').textContent = fmt(proyectada);
+        $('cBnbColchon').textContent = fmt(colchon) + '%';
+        $('cBnbDiasLabel').textContent = dias;
+        $('cBnbFormula').innerHTML =
+          `${fmt(tasa)} × (1 + ${pct/100})<sup>${dias}</sup> = ${fmt(proyectada)} <span style="color:var(--color-fg-muted)">→ Colchón: ${fmt(colchon)}%</span>`;
+      }
+      window.calcColchonBnb = calcColchonBnb;
+
+      // ---------- DIVISIÓN ----------
+      function calcDivision() {
+        const cop = parseFloat($('dCop').value) || 0;
+        const bcv = parseFloat($('dBcv').value) || 0;
+        const bnb = parseFloat($('dBnb').value) || 0;
+
+        if (cop && bcv) {
+          const tasaBcv = cop / bcv;
+          $('dBcvResult').textContent = fmt4(tasaBcv);
+          $('dBcvEjemplo').innerHTML = `Ej: 3.200 COP ÷ ${fmt4(tasaBcv)} = <strong>${fmt(3200/tasaBcv)} Bs</strong>`;
+        } else {
+          $('dBcvResult').textContent = '—';
+          $('dBcvEjemplo').textContent = '—';
+        }
+
+        if (cop && bnb) {
+          const tasaBnb = cop / bnb;
+          $('dBnbResult').textContent = fmt4(tasaBnb);
+          $('dBnbEjemplo').innerHTML = `Ej: 3.200 COP ÷ ${fmt4(tasaBnb)} = <strong>${fmt(3200/tasaBnb)} Bs</strong>`;
+        } else {
+          $('dBnbResult').textContent = '—';
+          $('dBnbEjemplo').textContent = '—';
+        }
+      }
+      window.calcDivision = calcDivision;
+
+      // ---------- PRODUCTOS ----------
+      function addProducto() {
+        const nombre = $('pNombre').value.trim();
+        const costo = parseFloat($('pCosto').value) || 0;
+        const ganancia = parseFloat($('pGanancia').value) || 0;
+        if (!nombre || !costo) { showToast('❌ Ingresa nombre y costo', 'error'); return; }
+        const list = getProductos();
+        list.push({ id: Date.now(), nombre, costo, ganancia });
+        saveProductos(list);
+        $('pNombre').value = '';
+        $('pCosto').value = '';
+        $('pGanancia').value = '';
+        renderProductos();
+        autoSaveDebounced();
+      }
+      window.addProducto = addProducto;
+
+      function updateProducto(id, field, value) {
+        const list = getProductos();
+        const p = list.find(item => item.id === id);
+        if (!p) return;
+        if (field === 'nombre') p.nombre = value;
+        if (field === 'costo') p.costo = parseFloat(value) || 0;
+        if (field === 'ganancia') p.ganancia = parseFloat(value) || 0;
+        saveProductos(list);
+        renderProductos();
+        autoSaveDebounced();
+      }
+      window.updateProducto = updateProducto;
+
+      function deleteProducto(id) {
+        let list = getProductos();
+        list = list.filter(item => item.id !== id);
+        saveProductos(list);
+        renderProductos();
+        autoSaveDebounced();
+      }
+      window.deleteProducto = deleteProducto;
+
+      function clearProductos() {
+        if (!confirm('¿Borrar todos los productos?')) return;
+        saveProductos([]);
+        renderProductos();
+        autoSaveDebounced();
+      }
+      window.clearProductos = clearProductos;
+
+      function renderProductos() {
+        const list = getProductos();
+        const tbody = $('productosTable');
+        const tipo = $('pTasaTipo').value;
+        let tasaDiv = 0;
+
+        if (tipo === 'bcv') {
+          const bcvColchon = parseFloat($('cBcvResult').textContent.replace(/\./g, '').replace(',', '.')) || rates.bcvUsd;
+          const cop = parseFloat($('dCop').value) || 3200;
+          tasaDiv = cop / bcvColchon;
+          $('pTasaValor').value = fmt4(tasaDiv);
+        } else {
+          const bnbColchon = parseFloat($('cBnbResult').textContent.replace(/\./g, '').replace(',', '.')) || rates.bnbAvg;
+          const cop = parseFloat($('dCop').value) || 3200;
+          tasaDiv = cop / bnbColchon;
+          $('pTasaValor').value = fmt4(tasaDiv);
+        }
+
+        $('productCount').textContent = list.length;
+
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6"><div class="Blankslate"><div class="Blankslate-title">No hay productos</div><div class="Blankslate-desc">Agrega tu primer producto arriba para empezar.</div></div></td></tr>`;
+          return;
+        }
+
+        let html = '';
+        for (const p of list) {
+          const precioCop = p.costo * (1 + p.ganancia / 100);
+          const precioBs = tasaDiv > 0 ? precioCop / tasaDiv : 0;
+          html += `<tr>
+            <td><input type="text" value="${escapeHtml(p.nombre)}" onchange="window.updateProducto(${p.id}, 'nombre', this.value)"></td>
+            <td><input type="number" value="${p.costo}" min="0" onchange="window.updateProducto(${p.id}, 'costo', this.value)"></td>
+            <td><input type="number" value="${p.ganancia}" min="0" step="0.1" onchange="window.updateProducto(${p.id}, 'ganancia', this.value)"></td>
+            <td>${fmt(precioCop)}</td>
+            <td><strong style="color:var(--color-fg-default)">${fmt(precioBs)}</strong></td>
+            <td><button class="Btn Btn-danger Btn-sm" onclick="window.deleteProducto(${p.id})">✕</button></td>
+          </tr>`;
+        }
+        tbody.innerHTML = html;
+      }
+      window.renderProductos = renderProductos;
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // ---------- HISTORIAL (PROYECCIONES) ----------
+      function calcHistorial() {
+        const bcvPct = parseFloat($('hBcvPct').value) || 0.6;
+        const bnbPct = parseFloat($('hBnbPct').value) || 0.6;
+
+        if (rates.bcvUsd > 0) {
+          $('hBcvHoy').textContent = fmt(rates.bcvUsd);
+          $('hBcvAyer').textContent = rates.bcvPrev > 0 ? fmt(rates.bcvPrev) : `${fmt(rates.bcvUsd / Math.pow(1+bcvPct/100, 1))}*`;
+          $('hBcv1s').textContent = `${fmt(rates.bcvUsd / Math.pow(1+bcvPct/100, 7))}*`;
+          $('hBcv1m').textContent = `${fmt(rates.bcvUsd / Math.pow(1+bcvPct/100, 30))}*`;
+          $('hBcvP1s').textContent = fmt(rates.bcvUsd * Math.pow(1+bcvPct/100, 7));
+          $('hBcvP1m').textContent = fmt(rates.bcvUsd * Math.pow(1+bcvPct/100, 30));
+          $('hBcvIncS').textContent = `${fmt((Math.pow(1+bcvPct/100, 7)-1)*100)}%`;
+          $('hBcvIncM').textContent = `${fmt((Math.pow(1+bcvPct/100, 30)-1)*100)}%`;
+        }
+        if (rates.bnbAvg > 0) {
+          $('hBnbHoy').textContent = fmt(rates.bnbAvg);
+          $('hBnbAyer').textContent = `${fmt(rates.bnbAvg / Math.pow(1+bnbPct/100, 1))}*`;
+          $('hBnb1s').textContent = `${fmt(rates.bnbAvg / Math.pow(1+bnbPct/100, 7))}*`;
+          $('hBnb1m').textContent = `${fmt(rates.bnbAvg / Math.pow(1+bnbPct/100, 30))}*`;
+          $('hBnbP1s').textContent = fmt(rates.bnbAvg * Math.pow(1+bnbPct/100, 7));
+          $('hBnbP1m').textContent = fmt(rates.bnbAvg * Math.pow(1+bnbPct/100, 30));
+          $('hBnbIncS').textContent = `${fmt((Math.pow(1+bnbPct/100, 7)-1)*100)}%`;
+          $('hBnbIncM').textContent = `${fmt((Math.pow(1+bnbPct/100, 30)-1)*100)}%`;
+        }
+      }
+      window.calcHistorial = calcHistorial;
+
+      // ---------- HISTORIAL BCV (desde finanzasdigital.com) ----------
+      let historialBcvData = [];
+      let historialBcvLoading = false;
+
+      async function fetchHistorialBcv() {
+        if (historialBcvLoading) return; // Evita múltiples llamadas simultáneas
+        historialBcvLoading = true;
+
+        const tbody = $('histBcvTbody');
+        const countBadge = $('histBcvCount');
+        const lastUpdateEl = $('histBcvLastUpdate');
+
+        // Mostrar carga
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted" style="padding:40px 0">⏳ Obteniendo datos de finanzasdigital.com...</td></tr>`;
+        if (countBadge) countBadge.textContent = '…';
+        if (lastUpdateEl) lastUpdateEl.textContent = 'Cargando...';
+
+        // Limpiar toasts anteriores del mismo tipo para evitar spam
+        document.querySelectorAll('.Toast').forEach(t => t.remove());
+
+        try {
+          const data = await obtenerHistorialDesdeFinanzas();
+          if (data && data.length > 0) {
+            historialBcvData = data;
+            renderHistorialBcv();
+            if (countBadge) countBadge.textContent = historialBcvData.length;
+            if (lastUpdateEl) lastUpdateEl.textContent = `Última actualización: ${new Date().toLocaleString('es-VE')}`;
+            showToast(`✅ Historial BCV actualizado (${historialBcvData.length} registros)`, 'success');
+          } else {
+            throw new Error('No se obtuvieron datos válidos');
+          }
+        } catch (e) {
+          console.error('Error en fetchHistorialBcv:', e);
+          // Si ya había datos previos, los mostramos pero con advertencia
+          if (historialBcvData.length > 0) {
+            renderHistorialBcv();
+            showToast(`⚠️ No se pudo actualizar, mostrando datos anteriores (${historialBcvData.length} registros)`, 'warning');
+          } else {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted" style="padding:40px 0">❌ No se pudo cargar el historial. Intenta más tarde.</td></tr>`;
+            if (countBadge) countBadge.textContent = '0';
+            showToast('❌ No se pudo cargar el historial BCV', 'error');
+          }
+          if (lastUpdateEl) lastUpdateEl.textContent = `Error: ${new Date().toLocaleString('es-VE')}`;
+        } finally {
+          historialBcvLoading = false;
+        }
+      }
+      window.fetchHistorialBcv = fetchHistorialBcv;
+
+      async function obtenerHistorialDesdeFinanzas() {
+        // Intentar con múltiples proxies
+        const proxies = [
+          'https://api.allorigins.win/get?url=',
+          'https://corsproxy.io/?'
+        ];
+        const target = 'https://finanzasdigital.com/tasa-de-cambio-dolar-diaria/';
+
+        let htmlContent = null;
+        let lastError = null;
+
+        for (const proxy of proxies) {
+          try {
+            const url = proxy + encodeURIComponent(target);
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status} con ${proxy}`);
+            const data = await res.json();
+            // allorigins devuelve { contents: ... }, corsproxy devuelve el HTML directamente
+            htmlContent = data.contents || (typeof data === 'string' ? data : null);
+            if (htmlContent) break;
+          } catch (e) {
+            lastError = e;
+            console.warn(`Proxy ${proxy} falló:`, e);
+          }
+        }
+
+        if (!htmlContent) throw new Error(`Todos los proxies fallaron: ${lastError?.message || 'desconocido'}`);
+
+        // Intentar extraer la tabla con múltiples estrategias
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+
+        // Estrategia 1: Buscar cualquier tabla que contenga "tasa" en el texto o clase
+        let tabla = null;
+        const tablas = doc.querySelectorAll('table');
+        for (const t of tablas) {
+          const texto = t.textContent.toLowerCase();
+          if (texto.includes('tasa') || texto.includes('fecha') || texto.includes('variación')) {
+            tabla = t;
+            break;
+          }
+        }
+
+        // Estrategia 2: Si no, buscar cualquier tbody
+        if (!tabla) {
+          const tbodyNode = doc.querySelector('tbody');
+          if (tbodyNode) tabla = tbodyNode.closest('table');
+        }
+
+        // Estrategia 3: Buscar por clases comunes
+        if (!tabla) {
+          const posibles = doc.querySelectorAll('.table, .tabla, .dataTable, .wp-block-table');
+          for (const el of posibles) {
+            if (el.tagName === 'TABLE') { tabla = el; break; }
+          }
+        }
+
+        // Si no hay tabla, lanzar error claro
+        if (!tabla) {
+          throw new Error('No se encontró la tabla en el HTML. La estructura de la página pudo haber cambiado.');
+        }
+
+        const tbodyNode = tabla.querySelector('tbody');
+        if (!tbodyNode) throw new Error('La tabla no tiene tbody');
+
+        const filas = tbodyNode.querySelectorAll('tr');
+        if (filas.length === 0) throw new Error('La tabla está vacía');
+
+        const filasData = [];
+        for (const fila of filas) {
+          const cols = fila.querySelectorAll('td');
+          if (cols.length < 3) continue;
+          const fecha = cols[0].textContent.replace(/["\n\r]/g, '').trim();
+          const tasa = cols[1].textContent.replace(/["\n\r]/g, '').trim();
+          const variacion = cols[2].textContent.replace(/["\n\r]/g, '').trim();
+          if (fecha && tasa) {
+            filasData.push({ fecha, tasa, variacion });
+          }
+        }
+
+        if (filasData.length === 0) throw new Error('No se pudieron extraer filas de la tabla');
+        return filasData;
+      }
+
+      function renderHistorialBcv() {
+        const tbody = $('histBcvTbody');
+        const stats = calcularEstadisticas(historialBcvData);
+        actualizarEstadisticas(stats);
+
+        if (historialBcvData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted" style="padding:40px 0">No hay datos disponibles</td></tr>`;
+          return;
+        }
+
+        // Mostrar todas las filas (más antigua a más reciente)
+        let html = '';
+        for (const row of historialBcvData) {
+          const tasaNum = parseFloat(row.tasa.replace(/[^\d.,]/g, '').replace(',', '.'));
+          const variacionNum = parseFloat(row.variacion.replace(/[^\d.,-]/g, '').replace(',', '.'));
+          const variacionStr = isNaN(variacionNum) ? row.variacion : (variacionNum >= 0 ? `+${variacionNum}` : `${variacionNum}`);
+          const colorVariacion = isNaN(variacionNum) ? '' : (variacionNum >= 0 ? 'text-danger' : 'text-success');
+          html += `<tr>
+            <td>${escapeHtml(row.fecha)}</td>
+            <td><strong>${escapeHtml(row.tasa)}</strong></td>
+            <td class="${colorVariacion}">${escapeHtml(variacionStr)}</td>
+          </tr>`;
+        }
+        tbody.innerHTML = html;
+      }
+
+      function calcularEstadisticas(data) {
+        if (!data || data.length === 0) return null;
+        const numeros = data
+          .map(r => parseFloat(r.tasa.replace(/[^\d.,]/g, '').replace(',', '.')))
+          .filter(v => !isNaN(v));
+        const variaciones = data
+          .map(r => parseFloat(r.variacion.replace(/[^\d.,-]/g, '').replace(',', '.')))
+          .filter(v => !isNaN(v));
+
+        if (numeros.length === 0) return null;
+
+        const suma = numeros.reduce((a,b) => a+b, 0);
+        const promedio = suma / numeros.length;
+        const maximo = Math.max(...numeros);
+        const minimo = Math.min(...numeros);
+        const ultimo = numeros[numeros.length - 1];
+        const ultimaFecha = data[data.length - 1]?.fecha || '—';
+        const variacionMedia = variaciones.length > 0 ? variaciones.reduce((a,b) => a+b, 0) / variaciones.length : 0;
+
+        return { promedio, maximo, minimo, ultimo, ultimaFecha, variacionMedia, total: data.length };
+      }
+
+      function actualizarEstadisticas(stats) {
+        if (!stats) {
+          $('statPromedio').textContent = '—';
+          $('statMaximo').textContent = '—';
+          $('statMinimo').textContent = '—';
+          $('statVariacionMedia').textContent = '—';
+          $('statUltima').textContent = '—';
+          $('statFechaUltima').textContent = '—';
+          return;
+        }
+        $('statPromedio').textContent = fmt(stats.promedio);
+        $('statMaximo').textContent = fmt(stats.maximo);
+        $('statMinimo').textContent = fmt(stats.minimo);
+        $('statVariacionMedia').textContent = fmt(stats.variacionMedia) + '%';
+        $('statUltima').textContent = fmt(stats.ultimo);
+        $('statFechaUltima').textContent = stats.ultimaFecha;
+        $('histBcvRowCount').textContent = `${stats.total} filas`;
+        $('histBcvOrdenLabel').textContent = 'Antiguo → Reciente';
+      }
+
+      // ---------- AUTO ----------
+      function toggleAuto() {
+        const btn = $('autoBtn');
+        if (isAuto) {
+          clearInterval(autoInterval);
+          isAuto = false;
+          btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg> Auto: OFF`;
+          showToast('⏹️ Auto actualización desactivada', 'info');
+        } else {
+          fetchAll();
+          autoInterval = setInterval(fetchAll, 60000);
+          isAuto = true;
+          btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.612 10.066c.236.907 1.02 1.698 2.332 2.058 1.2.317 2.8.465 4.344.465 1.544 0 3.144-.148 4.344-.465 1.312-.36 2.096-1.15 2.332-2.058.236-.908-.02-1.835-.746-2.73-.726-.895-1.963-1.636-3.54-2.074C9.498 4.966 8.78 4.9 8 4.9c-.78 0-1.498.066-2.346.262-1.577.438-2.814 1.179-3.54 2.074-.726.895-.982 1.822-.746 2.73Z"/></svg> Auto: ON`;
+          showToast('▶️ Auto actualización activada (cada 60s)', 'success');
+        }
+      }
+      window.toggleAuto = toggleAuto;
+
+      // ---------- INIT ----------
+      function init() {
+        // Reconnect to workspace if saved
+        const ws = getWorkspace();
+        if (ws.roomId && ws.firebaseConfig) {
+          $('roomIdInput').value = ws.roomId;
+          $('firebaseConfigInput').value = JSON.stringify(ws.firebaseConfig, null, 2);
+          initFirebase(ws.firebaseConfig).then((ok) => {
+            if (ok) {
+              currentRoom = ws.roomId;
+              subscribeToRoom(ws.roomId);
+              updateWorkspaceUI();
+            }
+          });
+        }
+
+        loadAllSettings();
+        fetchAll();
+
+        // Load Firebase SDK dynamically
+        import('https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js')
+          .then(({ initializeApp }) => {
+            import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js')
+              .then(({ getDatabase, ref, onValue, set, get, child, off }) => {
+                window._fb = { initializeApp, getDatabase, ref, onValue, set, get, child, off };
+                console.log('Firebase SDK loaded');
+              })
+              .catch(() => console.warn('Firebase Database no disponible'));
+          })
+          .catch(() => console.warn('Firebase App no disponible'));
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>
