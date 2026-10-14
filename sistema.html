@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0C120E">
+  <title>Sistema de Gestión · Puerto Ayacucho</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2385d8a1'/%3E%3Cpath d='M8 11h16M8 16h11M8 21h14' fill='none' stroke='%2300391e' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --night: #0c120e;
+      --night-soft: #0a0f0c;
+      --panel: #1a201c;
+      --card: #242b26;
+      --high: #2f3630;
+      --highest: #3b433c;
+      --mint: #85d8a1;
+      --ink: #00391e;
+      --hover: #223027;
+      --fg: #dde4dc;
+      --muted: #b3c2b5;
+      --warn: #f2c94c;
+      --ease: cubic-bezier(.2, 0, 0, 1);
+      --shadow: 0 24px 48px -12px #030905b3;
+      --font: "Roboto Flex", "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--night);
+      color: var(--fg);
+      font-family: var(--font);
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--mint); color: var(--ink); }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--night); }
+    ::-webkit-scrollbar-thumb { background: var(--highest); border-radius: 999px; }
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    a { color: var(--mint); text-decoration: none; }
+    .skip {
+      position: absolute; left: 1rem; top: 1rem; z-index: 80;
+      transform: translateY(-150%);
+      background: var(--mint); color: var(--ink); font-weight: 600;
+      border-radius: 999px; padding: .6rem 1rem;
+    }
+    .skip:focus { transform: none; }
+    .wrap { width: min(72rem, calc(100% - 2rem)); margin-inline: auto; }
+    @media (min-width: 40rem) { .wrap { width: min(72rem, calc(100% - 3rem)); } }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background: color-mix(in srgb, var(--night) 84%, transparent);
+      backdrop-filter: blur(16px);
+    }
+    .bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .75rem; min-height: 3.25rem; padding: .5rem 0; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: .6rem; color: var(--fg); min-width: 0; }
+    .brand b { white-space: nowrap; }
+    .brand:hover { opacity: .92; }
+    .logo {
+      width: 1.75rem; height: 1.75rem; border-radius: .55rem;
+      background: var(--mint); color: var(--ink);
+      display: grid; place-items: center; flex: none;
+    }
+    .logo svg { width: 1rem; height: 1rem; }
+    .brand b { font-weight: 650; letter-spacing: -.02em; }
+    .brand b span { color: var(--mint); }
+    .bar-actions { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; justify-content: flex-end; }
+    .when { color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+    @media (max-width: 52rem) {
+      .bar-actions { width: 100%; justify-content: flex-start; }
+      .when { flex: 1 1 auto; }
+      .btn { height: 2.25rem; padding-inline: .85rem; }
+    }
+
+    .btn {
+      height: 2.5rem; border: 0; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      padding: 0 1rem; font-weight: 650; font-size: .875rem;
+      transition: background .15s var(--ease), filter .15s var(--ease), transform .15s var(--ease);
+    }
+    .btn svg { width: 1rem; height: 1rem; }
+    .btn-mint { background: var(--mint); color: var(--ink); box-shadow: 0 4px 12px -4px #03090580; }
+    .btn-mint:hover { filter: brightness(1.06); }
+    .btn-mint:active { transform: scale(.98); }
+    .btn-ghost { background: color-mix(in srgb, var(--mint) 12%, transparent); color: var(--mint); }
+    .btn-ghost:hover, .btn-ghost[aria-pressed="true"] { background: color-mix(in srgb, var(--mint) 20%, transparent); }
+    .btn-quiet { background: transparent; color: var(--muted); padding-inline: .7rem; }
+    .btn-quiet:hover { color: var(--mint); background: color-mix(in srgb, var(--mint) 8%, transparent); }
+    .btn-warn { background: transparent; color: var(--warn); }
+    .icon-btn { width: 2.5rem; padding: 0; }
+
+    .chips {
+      display: flex; gap: .35rem; overflow-x: auto; padding: 0 0 .7rem;
+      scrollbar-width: none;
+    }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex: none; height: 2.25rem; border: 0; border-radius: 999px;
+      padding: 0 .95rem; background: transparent; color: var(--fg);
+      font-weight: 550; font-size: .875rem;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .chip:hover { background: color-mix(in srgb, var(--mint) 10%, transparent); color: var(--mint); }
+    .chip[aria-selected="true"] { background: var(--mint); color: var(--ink); }
+    .count {
+      min-width: 1.25rem; height: 1.25rem; padding: 0 .35rem; border-radius: 999px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+      font-size: .75rem; font-variant-numeric: tabular-nums;
+      display: inline-grid; place-items: center;
+    }
+    .chip:not([aria-selected="true"]) .count { background: var(--card); }
+
+    .hero { position: relative; overflow: hidden; padding: 1.6rem 0 1.2rem; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(clamp(18rem, 35vw, 30rem) at 50% 0, color-mix(in srgb, var(--mint) 9%, transparent), transparent 70%);
+      pointer-events: none;
+    }
+    .hero .wrap { position: relative; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      background: color-mix(in srgb, var(--mint) 15%, transparent);
+      color: var(--mint); border-radius: 999px; padding: .35rem .75rem;
+      font-size: .75rem; font-weight: 600;
+    }
+    .dot { width: .4rem; height: .4rem; border-radius: 50%; background: var(--mint); animation: blink 1.8s ease-in-out infinite; }
+    h1 {
+      margin: .85rem 0 0; font-size: clamp(1.85rem, 4vw, 3.25rem);
+      line-height: 1.12; letter-spacing: -.03em; font-weight: 700; text-wrap: balance;
+    }
+    h1 em { font-style: normal; color: var(--mint); }
+    .sub { margin: .4rem 0 0; color: var(--muted); }
+    .stats { display: flex; flex-wrap: wrap; gap: 1.1rem 1.6rem; margin-top: 1.35rem; align-items: stretch; }
+    .stat { display: flex; flex-direction: column; gap: .15rem; min-width: 7rem; }
+    .stat strong { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .stat span { color: var(--muted); font-size: .75rem; }
+    .divline { width: 1px; background: var(--high); align-self: stretch; }
+
+    main { padding-bottom: 4rem; }
+    .panel { display: none; animation: rise .45s var(--ease); }
+    .panel.active { display: block; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    .head { margin: .4rem 0 1rem; }
+    .tag {
+      display: inline-flex; align-items: center; height: 2rem; padding: 0 .85rem;
+      border-radius: 999px; background: var(--card); color: var(--mint);
+      font-size: .8125rem; font-weight: 600;
+    }
+    h2 { margin: .7rem 0 0; font-size: clamp(1.45rem, 2vw, 2rem); letter-spacing: -.025em; font-weight: 650; }
+    .lead { margin: .35rem 0 0; max-width: 40rem; color: var(--muted); font-size: .875rem; }
+
+    .card {
+      background: var(--panel); border-radius: 1.75rem; padding: 1.15rem 1.15rem 1.2rem;
+      margin-bottom: .85rem;
+    }
+    @media (min-width: 40rem) { .card { padding: 1.35rem 1.4rem 1.45rem; } }
+    .card h3 { margin: 0 0 .85rem; font-size: 1.05rem; font-weight: 650; letter-spacing: -.02em; }
+    .grid { display: grid; gap: .75rem; }
+    .g2 { grid-template-columns: 1fr; }
+    .g3 { grid-template-columns: 1fr; }
+    .g4 { grid-template-columns: 1fr; }
+    @media (min-width: 40rem) {
+      .g2 { grid-template-columns: 1fr 1fr; }
+      .g3 { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 64rem) { .g4 { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 40rem) and (max-width: 63.99rem) { .g4 { grid-template-columns: 1fr 1fr; } }
+
+    .quote {
+      background: var(--card); border-radius: 1.25rem; padding: 1rem 1.05rem 1.05rem;
+      min-height: 8.2rem;
+    }
+    .quote header, .row-between { display: flex; justify-content: space-between; align-items: flex-start; gap: .6rem; }
+    .kicker { color: var(--muted); font-size: .8125rem; font-weight: 550; }
+    .pill {
+      border-radius: 999px; padding: .2rem .55rem; font-size: .6875rem; font-weight: 650;
+      background: color-mix(in srgb, var(--mint) 15%, transparent); color: var(--mint);
+      max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pill.warn { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); }
+    .pill.mute { background: var(--high); color: var(--muted); }
+    .num {
+      margin: .55rem 0 0; font-size: clamp(1.7rem, 3vw, 2.15rem);
+      font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1.05;
+    }
+    .unit { margin: .35rem 0 0; color: var(--muted); font-size: .75rem; }
+    .delta { margin: .55rem 0 0; font-size: .8125rem; font-weight: 650; display: flex; gap: .35rem; flex-wrap: wrap; }
+    .delta.up { color: var(--warn); }
+    .delta.down { color: var(--mint); }
+    .delta .vs { color: var(--muted); font-weight: 500; }
+    .meter { margin-top: .8rem; height: .4rem; border-radius: 999px; background: color-mix(in srgb, var(--mint) 12%, transparent); overflow: hidden; }
+    .meter i { display: block; height: 100%; border-radius: inherit; background: var(--mint); }
+    .meter.warn i { background: var(--warn); }
+
+    label.field { display: grid; gap: .35rem; }
+    label.field span { font-size: .8125rem; font-weight: 650; }
+    input, select {
+      width: 100%; height: 2.75rem; border: 0; border-radius: 1rem;
+      background: var(--card); padding: 0 .85rem; outline: none;
+    }
+    .card input, .card select, .quote input { background: var(--night); }
+    input:focus, select:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mint) 70%, transparent); }
+    input::placeholder { color: color-mix(in srgb, var(--muted) 45%, transparent); }
+    input[readonly] { color: var(--muted); }
+    .hint { color: var(--muted); font-size: .75rem; }
+    .formula {
+      margin-top: .85rem; color: var(--mint); font-size: .8125rem;
+      font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+    }
+    .well { background: var(--card); border-radius: 1.15rem; padding: .9rem 1rem; }
+    .well .num { font-size: 1.7rem; }
+    .note {
+      background: var(--card); color: var(--fg); border-radius: 1.15rem;
+      padding: .8rem 1rem; margin-bottom: .85rem; font-size: .875rem;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .85rem; }
+    .split { display: flex; justify-content: space-between; gap: .75rem; align-items: center; flex-wrap: wrap; margin-bottom: .75rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    th { text-align: left; color: var(--muted); font-weight: 600; font-size: .75rem; padding: .65rem .7rem; }
+    td { padding: .45rem .55rem; border-top: 1px solid color-mix(in srgb, var(--fg) 6%, transparent); vertical-align: middle; }
+    td.numc, th.numc { text-align: right; font-variant-numeric: tabular-nums; }
+    .bs { color: var(--mint); font-weight: 700; }
+    .scroll { max-height: 32rem; overflow: auto; border-radius: 1.15rem; background: var(--card); }
+    .scroll th { position: sticky; top: 0; background: var(--high); }
+    .empty { padding: 1.4rem 0 .4rem; color: var(--muted); }
+    .chart { width: 100%; height: auto; display: block; }
+    .legend { display: flex; gap: 1rem; color: var(--muted); font-size: .75rem; margin-top: .4rem; }
+    .sw { width: .7rem; height: .7rem; border-radius: 99px; display: inline-block; margin-right: .3rem; vertical-align: -1px; }
+    .cards-m { display: grid; gap: .65rem; }
+    .desk { display: none; }
+    @media (min-width: 48rem) {
+      .cards-m { display: none; }
+      .desk { display: block; }
+    }
+    .pcard .nums { display: flex; justify-content: space-between; align-items: flex-end; margin-top: .7rem; }
+    footer {
+      border-top: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
+      padding: 1.3rem 0 2rem; color: var(--muted); font-size: .8125rem;
+    }
+    .foot { display: flex; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+    .toasts {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 70;
+      display: grid; gap: .45rem; width: min(22rem, calc(100% - 2rem));
+    }
+    .toast {
+      background: var(--panel); color: var(--fg); border-radius: 1.1rem;
+      padding: .8rem 1rem; box-shadow: var(--shadow); font-size: .875rem;
+    }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .up { color: var(--warn); }
+    .down { color: var(--mint); }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="bar">
+        <a class="brand" href="#monitor" onclick="return show('monitor')">
+          <span class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 8h14M5 12h9M5 16h12"/></svg>
+          </span>
+          <b>Sistema <span>Gestión</span></b>
+        </a>
+        <div class="bar-actions">
+          <span class="when" id="when">—</span>
+          <button class="btn btn-mint" id="refreshBtn" type="button" onclick="fetchAll(true)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3L21 8"/><path d="M21 3v5h-5"/></svg>
+            Actualizar
+          </button>
+          <button class="btn btn-ghost" id="autoBtn" type="button" aria-pressed="false" onclick="toggleAuto()">Auto off</button>
+          <button class="btn btn-quiet" type="button" onclick="exportBackup()">Exportar</button>
+          <button class="btn btn-quiet" type="button" onclick="document.getElementById('importFile').click()">Importar</button>
+          <input class="sr" id="importFile" type="file" accept="application/json,.json" onchange="importBackup(this)">
+        </div>
+      </div>
+      <nav class="chips" role="tablist" aria-label="Secciones">
+        <button class="chip" id="tab-monitor" role="tab" aria-selected="true" onclick="show('monitor')">Monitor</button>
+        <button class="chip" id="tab-colchon" role="tab" aria-selected="false" onclick="show('colchon')">Colchón</button>
+        <button class="chip" id="tab-division" role="tab" aria-selected="false" onclick="show('division')">División</button>
+        <button class="chip" id="tab-productos" role="tab" aria-selected="false" onclick="show('productos')">Productos <span class="count" id="productCount">0</span></button>
+        <button class="chip" id="tab-proyeccion" role="tab" aria-selected="false" onclick="show('proyeccion')">Proyección</button>
+        <button class="chip" id="tab-historial" role="tab" aria-selected="false" onclick="show('historial')">Historial</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge"><span class="dot" aria-hidden="true"></span> Puerto Ayacucho</span>
+      <h1>Tasas, colchón y <em>precios</em></h1>
+      <p class="sub">BCV, paralelo y pesos colombianos en un solo escritorio. Todo queda en este navegador.</p>
+      <div class="stats">
+        <div class="stat"><strong id="heroBcv">—</strong><span>BCV · Bs/USD</span></div>
+        <span class="divline" aria-hidden="true"></span>
+        <div class="stat"><strong id="heroP2p">—</strong><span>Binance · promedio</span></div>
+        <span class="divline" aria-hidden="true"></span>
+        <div class="stat"><strong id="heroGap">—</strong><span>Brecha oficial / P2P</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main id="contenido">
+    <div class="wrap">
+      <p class="note" id="notes" hidden></p>
+
+      <section class="panel active" id="sec-monitor" role="tabpanel">
+        <div class="head">
+          <span class="tag">Monitor</span>
+          <h2>Lo que está vigente</h2>
+          <p class="lead">Si escribes un número, reemplaza a la fuente. Déjalo vacío para volver a la lectura automática.</p>
+        </div>
+        <div class="card">
+          <h3>Ajuste manual</h3>
+          <div class="grid g4">
+            <label class="field"><span>BCV (Bs/USD)</span><input id="manualBcv" type="number" step="0.0001" inputmode="decimal" placeholder="876.80" oninput="onManual()"></label>
+            <label class="field"><span>Binance compra</span><input id="manualBnbBuy" type="number" step="0.01" inputmode="decimal" placeholder="1013" oninput="onManual()"></label>
+            <label class="field"><span>Binance venta</span><input id="manualBnbSell" type="number" step="0.01" inputmode="decimal" placeholder="1013" oninput="onManual()"></label>
+            <label class="field"><span>COP por USD</span><input id="manualCop" type="number" step="0.01" inputmode="decimal" placeholder="3236" oninput="onManual()"></label>
+          </div>
+        </div>
+        <div class="grid g2">
+          <article class="quote">
+            <header><span class="kicker">Dólar oficial</span><span class="pill" id="srcBcv">—</span></header>
+            <p class="num" id="mBcvUsd">—</p>
+            <p class="unit">Bs por USD <span id="mBcvDate"></span></p>
+            <p class="delta" id="mBcvDelta">—</p>
+          </article>
+          <article class="quote">
+            <header><span class="kicker">Euro oficial</span><span class="pill" id="srcEur">—</span></header>
+            <p class="num" id="mBcvEur">—</p>
+            <p class="unit">Bs por EUR</p>
+            <p class="delta" id="mEurDelta">—</p>
+          </article>
+        </div>
+        <div class="grid g4" style="margin-top:.75rem">
+          <article class="quote"><header><span class="kicker">Binance compra</span><span class="pill" id="srcBuy">—</span></header><p class="num" id="mBuy">—</p><p class="unit">Bs por USDT</p></article>
+          <article class="quote"><header><span class="kicker">Binance venta</span><span class="pill" id="srcSell">—</span></header><p class="num" id="mSell">—</p><p class="unit">Bs por USDT</p></article>
+          <article class="quote"><header><span class="kicker">Bybit compra</span><span class="pill" id="srcByb">—</span></header><p class="num" id="mBybBuy">—</p><p class="unit">Bs por USDT</p></article>
+          <article class="quote"><header><span class="kicker">Bybit venta</span><span class="pill mute" id="srcByb2">—</span></header><p class="num" id="mBybSell">—</p><p class="unit">Bs por USDT</p></article>
+        </div>
+        <div class="grid g2" style="margin-top:.75rem">
+          <article class="quote">
+            <header><span class="kicker">Promedio Binance</span><span class="pill" id="srcAvg">—</span></header>
+            <p class="num" id="mAvg">—</p>
+            <p class="unit">Compra y venta</p>
+          </article>
+          <article class="quote">
+            <span class="kicker">Brecha</span>
+            <p class="num" id="mGap">—</p>
+            <p class="unit">Cuánto más caro está el paralelo</p>
+            <div class="meter" id="mMeter"><i style="width:0"></i></div>
+          </article>
+        </div>
+        <div class="grid g2" style="margin-top:.75rem">
+          <article class="quote"><header><span class="kicker">Peso colombiano</span><span class="pill" id="srcCop">—</span></header><p class="num" id="mCop">—</p><p class="unit">COP por 1 USD</p></article>
+          <article class="quote"><span class="kicker">Dólar en pesos</span><p class="num" id="mCopInv">—</p><p class="unit">USD por 1 COP</p></article>
+        </div>
+      </section>
+
+      <section class="panel" id="sec-colchon" role="tabpanel">
+        <div class="head">
+          <span class="tag">Colchón</span>
+          <h2>Protege el precio</h2>
+          <p class="lead">Interés compuesto: tasa × (1 + % diario) ^ días. Esa proyección es la que usan la división y los productos.</p>
+        </div>
+        <div class="card">
+          <h3>BCV</h3>
+          <div class="grid g3">
+            <label class="field"><span>Tasa actual (Bs/USD)</span><input id="cBcvTasa" data-auto="1" type="number" step="0.0001" inputmode="decimal" oninput="unlock(this); calcAll()"></label>
+            <label class="field"><span>% devaluación diaria</span><input id="cBcvPct" type="number" step="0.01" value="0.6" inputmode="decimal" oninput="calcAll()"></label>
+            <label class="field"><span>Días</span><input id="cBcvDias" type="number" min="1" step="1" value="7" oninput="calcAll()"></label>
+          </div>
+          <div class="actions">
+            <span class="hint" id="cBcvLink">Sigue al monitor.</span>
+            <button class="btn btn-quiet" id="cBcvFollow" type="button" hidden onclick="relink('cBcvTasa')">Volver al monitor</button>
+          </div>
+          <div class="grid g2" style="margin-top:.8rem">
+            <div class="well"><div class="kicker">Tasa proyectada</div><p class="num" id="cBcvResult">—</p><p class="unit" id="cBcvDays">Bs/USD</p></div>
+            <div class="well"><div class="kicker">Colchón</div><p class="num" id="cBcvColchon">—</p><p class="unit">Protección del período</p></div>
+          </div>
+          <p class="formula" id="cBcvFormula">—</p>
+        </div>
+        <div class="card">
+          <h3>Binance P2P</h3>
+          <div class="grid g3">
+            <label class="field"><span>Tasa actual (Bs/USDT)</span><input id="cBnbTasa" data-auto="1" type="number" step="0.0001" inputmode="decimal" oninput="unlock(this); calcAll()"></label>
+            <label class="field"><span>% devaluación diaria</span><input id="cBnbPct" type="number" step="0.01" value="0.6" inputmode="decimal" oninput="calcAll()"></label>
+            <label class="field"><span>Días</span><input id="cBnbDias" type="number" min="1" step="1" value="7" oninput="calcAll()"></label>
+          </div>
+          <div class="actions">
+            <span class="hint" id="cBnbLink">Sigue al monitor.</span>
+            <button class="btn btn-quiet" id="cBnbFollow" type="button" hidden onclick="relink('cBnbTasa')">Volver al monitor</button>
+          </div>
+          <div class="grid g2" style="margin-top:.8rem">
+            <div class="well"><div class="kicker">Tasa proyectada</div><p class="num" id="cBnbResult">—</p><p class="unit" id="cBnbDays">Bs/USDT</p></div>
+            <div class="well"><div class="kicker">Colchón</div><p class="num" id="cBnbColchon">—</p><p class="unit">Protección del período</p></div>
+          </div>
+          <p class="formula" id="cBnbFormula">—</p>
+        </div>
+      </section>
+
+      <section class="panel" id="sec-division" role="tabpanel">
+        <div class="head">
+          <span class="tag">División</span>
+          <h2>De pesos a bolívares</h2>
+          <p class="lead">La tasa de división es COP por cada bolívar. El precio en Bs sale de dividir el precio en pesos entre esa tasa.</p>
+        </div>
+        <div class="card">
+          <div class="grid g3">
+            <label class="field"><span>COP por 1 USD</span><input id="dCop" type="number" step="0.01" value="3200" inputmode="decimal" oninput="calcAll()"><span class="hint" id="dCopHint">Independiente del monitor</span></label>
+            <label class="field"><span>BCV con colchón</span><input id="dBcv" data-auto="1" type="number" step="0.0001" inputmode="decimal" oninput="unlock(this); calcAll()"><span class="hint" id="dBcvHint">Sigue el colchón</span></label>
+            <label class="field"><span>Binance con colchón</span><input id="dBnb" data-auto="1" type="number" step="0.0001" inputmode="decimal" oninput="unlock(this); calcAll()"><span class="hint" id="dBnbHint">Sigue el colchón</span></label>
+          </div>
+          <div class="actions">
+            <button class="btn btn-ghost" type="button" onclick="useMonitorCop()">Usar COP del monitor</button>
+            <button class="btn btn-quiet" type="button" onclick="relink('dBcv')">Enlazar BCV</button>
+            <button class="btn btn-quiet" type="button" onclick="relink('dBnb')">Enlazar Binance</button>
+          </div>
+        </div>
+        <div class="grid g2">
+          <article class="quote"><span class="kicker">División BCV</span><p class="num" id="dBcvResult">—</p><p class="unit">COP por bolívar</p><p class="hint" id="dBcvEj" style="margin-top:.7rem">—</p></article>
+          <article class="quote"><span class="kicker">División Binance</span><p class="num" id="dBnbResult">—</p><p class="unit">COP por bolívar</p><p class="hint" id="dBnbEj" style="margin-top:.7rem">—</p></article>
+        </div>
+      </section>
+
+      <section class="panel" id="sec-productos" role="tabpanel">
+        <div class="head">
+          <span class="tag">Productos</span>
+          <h2>Tu lista de precios</h2>
+          <p class="lead" id="prodLead">Costo en pesos y margen. El bolívar usa la tasa con colchón.</p>
+        </div>
+        <div class="card">
+          <form class="grid g4" style="align-items:end" onsubmit="addProduct(event)">
+            <label class="field"><span>Nombre</span><input id="pNombre" type="text" placeholder="Aceite 1L"></label>
+            <label class="field"><span>Costo (COP)</span><input id="pCosto" type="number" min="0" step="0.01" inputmode="decimal" placeholder="3200"></label>
+            <label class="field"><span>% ganancia</span><input id="pGanancia" type="number" min="0" step="0.1" inputmode="decimal" placeholder="15"></label>
+            <button class="btn btn-mint" type="submit">Agregar</button>
+          </form>
+        </div>
+        <div class="split">
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+            <select id="pTasaTipo" style="width:auto;min-width:12rem" onchange="calcAll()">
+              <option value="bcv">BCV con colchón</option>
+              <option value="bnb">Binance con colchón</option>
+            </select>
+            <input id="pTasaValor" readonly aria-label="Tasa de división" style="width:8.5rem" placeholder="Sin tasa">
+            <input id="pBuscar" type="search" placeholder="Buscar" aria-label="Buscar producto" style="width:9rem" oninput="renderProducts()">
+          </div>
+          <div id="clearBox"><button class="btn btn-warn" type="button" onclick="askClear()">Borrar todos</button></div>
+        </div>
+        <div id="prodEmpty" class="card empty">Todavía no hay productos. Agrega el primero con su costo en pesos.</div>
+        <div id="prodList" hidden>
+          <div class="cards-m" id="prodCards"></div>
+          <div class="desk card" style="padding:0.4rem">
+            <table>
+              <thead><tr><th>Producto</th><th>Costo COP</th><th>% ganancia</th><th class="numc">Precio COP</th><th class="numc">Precio Bs</th><th></th></tr></thead>
+              <tbody id="prodTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="sec-proyeccion" role="tabpanel">
+        <div class="head">
+          <span class="tag">Proyección</span>
+          <h2>Antes y después</h2>
+          <p class="lead">Las cifras con asterisco son una estimación con la fórmula inversa, no el historial publicado.</p>
+        </div>
+        <div class="card">
+          <div class="grid g2">
+            <label class="field"><span>% diario BCV</span><input id="hBcvPct" type="number" step="0.01" value="0.6" oninput="calcAll()"></label>
+            <label class="field"><span>% diario P2P</span><input id="hBnbPct" type="number" step="0.01" value="0.6" oninput="calcAll()"></label>
+          </div>
+        </div>
+        <h3 style="margin:0 0 .6rem;font-size:1rem">BCV</h3>
+        <div class="grid g3" id="hBcvGrid"></div>
+        <h3 style="margin:1rem 0 .6rem;font-size:1rem">Binance</h3>
+        <div class="grid g3" id="hBnbGrid"></div>
+        <div class="card" style="margin-top:.9rem">
+          <h3>Curva de 30 días</h3>
+          <div id="projChart"></div>
+          <p class="legend"><span><i class="sw" style="background:var(--mint)"></i>BCV</span><span><i class="sw" style="background:var(--fg)"></i>P2P</span></p>
+        </div>
+      </section>
+
+      <section class="panel" id="sec-historial" role="tabpanel">
+        <div class="head">
+          <span class="tag">Historial BCV</span>
+          <h2>La serie publicada</h2>
+          <p class="lead">Tasas diarias reales, leídas de finanzasdigital.com. No es una proyección.</p>
+        </div>
+        <div class="split">
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+            <button class="btn btn-ghost" type="button" data-months="6" onclick="setMonths(6, this)">6 meses</button>
+            <button class="btn btn-mint" type="button" data-months="12" onclick="setMonths(12, this)">12 meses</button>
+            <button class="btn btn-ghost" type="button" data-months="24" onclick="setMonths(24, this)">24 meses</button>
+            <button class="btn btn-quiet" type="button" id="histReload" onclick="loadHistory(true)">Actualizar</button>
+          </div>
+          <button class="btn btn-quiet" type="button" id="histOrder" onclick="flipHistory()">Reciente primero</button>
+        </div>
+        <p class="hint" id="histMeta" style="margin:-.2rem 0 .8rem">—</p>
+        <div class="grid g3" id="histStats"></div>
+        <div class="card"><h3>Serie</h3><div id="histChart"></div></div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Fecha</th><th class="numc">Tasa Bs/USD</th><th class="numc">Variación</th></tr></thead>
+            <tbody id="histBody"><tr><td colspan="3" class="empty">Abre esta sección para cargar el historial.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>Los datos viven solo en este navegador.</span>
+      <span id="sources">—</span>
+    </div>
+  </footer>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script>
+    const SETTINGS_KEY = "vzla_settings_v3";
+    const PRODUCTS_KEY = "productos_vzla_v2";
+    const $ = (id) => document.getElementById(id);
+    const nf = new Map();
+    const rates = {
+      bcvUsd: 0, bcvEur: 0, bcvPrev: 0, bcvPrevDate: "", bcvDate: "",
+      usdPct: null, eurPct: null, bcvSource: "",
+      buy: 0, sell: 0, bybBuy: 0, bybSell: 0, p2pSource: "",
+      buyManual: false, sellManual: false, bcvManual: false,
+      cop: 0, copSource: "", copManual: false, fetchedAt: ""
+    };
+    let products = [];
+    let autoTimer = null;
+    let saveTimer = null;
+    let serie = { points: [], months: 12, newest: true, meta: "" };
+    let historyLoaded = false;
+    const feed = { bcvUsd: 0, bcvEur: 0, bcvPrev: 0, buy: 0, sell: 0, bybBuy: 0, bybSell: 0, cop: 0 };
+
+    function fmt(n, d = 2) {
+      if (n == null || !Number.isFinite(+n)) return "—";
+      let f = nf.get(d);
+      if (!f) { f = new Intl.NumberFormat("es-VE", { minimumFractionDigits: d, maximumFractionDigits: d }); nf.set(d, f); }
+      return f.format(+n);
+    }
+    function fmtPct(n, d = 2) {
+      if (n == null || !Number.isFinite(+n)) return "—";
+      const body = fmt(Math.abs(n), d);
+      return n > 0 ? "+" + body + "%" : n < 0 ? "−" + body + "%" : body + "%";
+    }
+    function num(v) {
+      if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+      if (v == null) return 0;
+      const n = Number(String(v).trim().replace(",", "."));
+      return Number.isFinite(n) ? n : 0;
+    }
+    function roundTo(n, d = 4) { const f = 10 ** d; return Math.round(n * f) / f; }
+    function projectRate(rate, pct, days) { return rate * Math.pow(1 + pct / 100, days); }
+    function pastRate(rate, pct, days) { return rate / Math.pow(1 + pct / 100, days); }
+    function cushionOf(pct, days) { return (Math.pow(1 + pct / 100, days) - 1) * 100; }
+    function quoteOf(tasa, pct, dias) {
+      const rate = num(tasa), p = num(pct), days = Math.round(num(dias)) || 7;
+      if (!rate || !p || days < 1) return null;
+      return { rate, pct: p, days, projected: projectRate(rate, p, days), cushion: cushionOf(p, days) };
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => {
+        if (c === "&") return "\u0026amp;";
+        if (c === "<") return "\u0026lt;";
+        if (c === ">") return "\u0026gt;";
+        if (c === '"') return "\u0026quot;";
+        return "\u0026#39;";
+      });
+    }
+    function toast(text) {
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.textContent = text;
+      $("toasts").appendChild(el);
+      setTimeout(() => el.remove(), 2800);
+    }
+    function pill(id, manual, name) {
+      const el = $(id);
+      if (!el) return;
+      el.className = "pill" + (manual ? " warn" : name ? "" : " mute");
+      el.textContent = manual ? "Manual" : (name || "Sin dato");
+    }
+    function setDelta(id, pct, versus) {
+      const el = $(id);
+      if (pct == null || !Number.isFinite(pct)) { el.className = "delta"; el.textContent = "Sin variación de la fuente"; return; }
+      el.className = "delta " + (pct >= 0 ? "up" : "down");
+      el.innerHTML = fmtPct(pct) + ' <span class="vs">vs ' + esc(versus || "el cierre anterior") + "</span>";
+    }
+
+    function show(name) {
+      document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+      document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-selected", "false"));
+      const panel = $("sec-" + name);
+      const tab = $("tab-" + name);
+      if (panel) panel.classList.add("active");
+      if (tab) tab.setAttribute("aria-selected", "true");
+      if (name === "historial" && !historyLoaded) loadHistory(false);
+      if (location.hash !== "#" + name) window.history.replaceState(null, "", "#" + name);
+      return false;
+    }
+
+    function unlock(input) {
+      input.dataset.auto = "0";
+      const map = { cBcvTasa: ["cBcvLink", "cBcvFollow"], cBnbTasa: ["cBnbLink", "cBnbFollow"], dBcv: ["dBcvHint", null], dBnb: ["dBnbHint", null] };
+      const pair = map[input.id];
+      if (!pair) return;
+      if (pair[0] && $(pair[0])) $(pair[0]).textContent = "Valor escrito a mano.";
+      if (pair[1] && $(pair[1])) $(pair[1]).hidden = false;
+    }
+    function relink(id) {
+      const input = $(id);
+      input.dataset.auto = "1";
+      if (id === "cBcvTasa" || id === "cBnbTasa") {
+        const link = id === "cBcvTasa" ? "cBcvLink" : "cBnbLink";
+        const btn = id === "cBcvTasa" ? "cBcvFollow" : "cBnbFollow";
+        $(link).textContent = "Sigue al monitor.";
+        $(btn).hidden = true;
+        if (id === "cBcvTasa" && rates.bcvUsd > 0) input.value = String(roundTo(rates.bcvUsd, 4));
+        if (id === "cBnbTasa" && avg() > 0) input.value = String(roundTo(avg(), 4));
+      }
+      calcAll();
+      persist();
+    }
+    function avg() {
+      const vals = [rates.buy, rates.sell].filter((n) => n > 0);
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    }
+
+    function applyManual() {
+      const mb = num($("manualBcv").value);
+      const buy = num($("manualBnbBuy").value);
+      const sell = num($("manualBnbSell").value);
+      const cop = num($("manualCop").value);
+      rates.bcvManual = mb > 0;
+      rates.bcvUsd = mb > 0 ? mb : feed.bcvUsd;
+      if (rates.bcvManual) rates.usdPct = null;
+      rates.buyManual = buy > 0;
+      rates.sellManual = sell > 0;
+      rates.buy = buy > 0 ? buy : feed.buy;
+      rates.sell = sell > 0 ? sell : feed.sell;
+      rates.copManual = cop > 0;
+      rates.cop = cop > 0 ? cop : feed.cop;
+      rates.bcvEur = feed.bcvEur;
+      rates.bcvPrev = feed.bcvPrev;
+      rates.bybBuy = feed.bybBuy;
+      rates.bybSell = feed.bybSell;
+    }
+
+    function syncAutos() {
+      if ($("cBcvTasa").dataset.auto === "1" && rates.bcvUsd > 0) $("cBcvTasa").value = String(roundTo(rates.bcvUsd, 4));
+      if ($("cBnbTasa").dataset.auto === "1" && avg() > 0) $("cBnbTasa").value = String(roundTo(avg(), 4));
+    }
+
+    function renderMonitor() {
+      $("heroBcv").textContent = rates.bcvUsd > 0 ? fmt(rates.bcvUsd, 4) : "—";
+      $("heroP2p").textContent = avg() > 0 ? fmt(avg(), 2) : "—";
+      const gap = rates.bcvUsd > 0 && avg() > 0 ? ((avg() - rates.bcvUsd) / rates.bcvUsd) * 100 : null;
+      $("heroGap").textContent = gap == null ? "—" : fmtPct(gap);
+      $("mBcvUsd").textContent = rates.bcvUsd > 0 ? fmt(rates.bcvUsd, 4) : "—";
+      $("mBcvEur").textContent = rates.bcvEur > 0 ? fmt(rates.bcvEur, 4) : "—";
+      $("mBcvDate").textContent = rates.bcvDate ? "· " + rates.bcvDate : "";
+      setDelta("mBcvDelta", rates.bcvManual ? null : rates.usdPct, rates.bcvPrevDate);
+      setDelta("mEurDelta", rates.eurPct, rates.bcvPrevDate);
+      pill("srcBcv", rates.bcvManual, rates.bcvSource);
+      pill("srcEur", false, rates.bcvEur > 0 ? rates.bcvSource : "");
+      $("mBuy").textContent = rates.buy > 0 ? fmt(rates.buy, 2) : "—";
+      $("mSell").textContent = rates.sell > 0 ? fmt(rates.sell, 2) : "—";
+      $("mBybBuy").textContent = rates.bybBuy > 0 ? fmt(rates.bybBuy, 2) : "—";
+      $("mBybSell").textContent = rates.bybSell > 0 ? fmt(rates.bybSell, 2) : "—";
+      $("mAvg").textContent = avg() > 0 ? fmt(avg(), 2) : "—";
+      pill("srcBuy", rates.buyManual, rates.buy > 0 ? rates.p2pSource : "");
+      pill("srcSell", rates.sellManual, rates.sell > 0 ? rates.p2pSource : "");
+      pill("srcByb", false, rates.bybBuy > 0 ? rates.p2pSource : "");
+      pill("srcByb2", false, rates.bybSell > 0 ? rates.p2pSource : "");
+      pill("srcAvg", rates.buyManual || rates.sellManual, avg() > 0 ? rates.p2pSource : "");
+      $("mGap").textContent = gap == null ? "—" : fmtPct(gap);
+      const bar = $("mMeter");
+      bar.className = "meter" + (gap != null && gap > 15 ? " warn" : "");
+      bar.firstElementChild.style.width = (gap == null ? 0 : Math.min(Math.abs(gap) * 2, 100)) + "%";
+      $("mCop").textContent = rates.cop > 0 ? fmt(rates.cop, 2) : "—";
+      $("mCopInv").textContent = rates.cop > 0 ? fmt(1 / rates.cop, 6) : "—";
+      pill("srcCop", rates.copManual, rates.cop > 0 ? rates.copSource : "");
+      const names = [rates.bcvSource, rates.p2pSource, rates.copSource].filter(Boolean);
+      $("sources").textContent = names.length ? [...new Set(names)].join(" · ") : "Fuentes no disponibles";
+      if (rates.fetchedAt) {
+        const d = new Date(rates.fetchedAt);
+        $("when").textContent = Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat("es-VE", { dateStyle: "medium", timeStyle: "short" }).format(d);
+      }
+      $("dCopHint").textContent = rates.cop > 0 ? "Monitor: " + fmt(rates.cop, 2) : "Independiente del monitor";
+    }
+
+    function renderCushion(prefix, unit) {
+      const q = quoteOf($(prefix + "Tasa").value, $(prefix + "Pct").value, $(prefix + "Dias").value);
+      $(prefix + "Result").textContent = q ? fmt(q.projected, 4) : "—";
+      $(prefix + "Colchon").textContent = q ? fmt(q.cushion) + "%" : "—";
+      $(prefix + "Days").textContent = unit + (q ? " en " + q.days + " días" : "");
+      $(prefix + "Formula").textContent = q
+        ? fmt(q.rate, 4) + " × (1 + " + fmt(q.pct, 2) + " / 100) ^ " + q.days + " = " + fmt(q.projected, 4)
+        : "Escribe tasa y porcentaje.";
+      return q;
+    }
+
+    function productRate() {
+      const cop = num($("dCop").value) || 3200;
+      const tipo = $("pTasaTipo").value;
+      const q = tipo === "bnb"
+        ? quoteOf($("cBnbTasa").value, $("cBnbPct").value, $("cBnbDias").value)
+        : quoteOf($("cBcvTasa").value, $("cBcvPct").value, $("cBcvDias").value);
+      const spot = tipo === "bnb" ? avg() : rates.bcvUsd;
+      const bs = (q && q.projected) || spot || num(tipo === "bnb" ? $("cBnbTasa").value : $("cBcvTasa").value);
+      return bs > 0 ? cop / bs : 0;
+    }
+
+    function renderDivision() {
+      const bcvQ = renderCushion("cBcv", "Bs/USD");
+      const bnbQ = renderCushion("cBnb", "Bs/USDT");
+      if ($("dBcv").dataset.auto === "1" && bcvQ) $("dBcv").value = String(roundTo(bcvQ.projected, 4));
+      if ($("dBnb").dataset.auto === "1" && bnbQ) $("dBnb").value = String(roundTo(bnbQ.projected, 4));
+      $("dBcvHint").textContent = $("dBcv").dataset.auto === "1" ? "Sigue el colchón" : "Valor fijo";
+      $("dBnbHint").textContent = $("dBnb").dataset.auto === "1" ? "Sigue el colchón" : "Valor fijo";
+      const cop = num($("dCop").value);
+      paintDiv("dBcv", cop, num($("dBcv").value));
+      paintDiv("dBnb", cop, num($("dBnb").value));
+    }
+    function paintDiv(prefix, cop, bs) {
+      const rate = cop > 0 && bs > 0 ? cop / bs : 0;
+      $(prefix + "Result").textContent = rate > 0 ? fmt(rate, 4) : "—";
+      $(prefix + "Ej").textContent = rate > 0 ? "1 USD (" + fmt(cop) + " COP) queda en " + fmt(cop / rate) + " Bs." : "Completa COP y la tasa en bolívares.";
+    }
+
+    function renderProducts() {
+      const tasa = productRate();
+      $("pTasaValor").value = tasa > 0 ? fmt(tasa, 4) : "";
+      $("productCount").textContent = String(products.length);
+      $("prodLead").textContent = "Precio Bs = costo × (1 + ganancia) ÷ tasa de división" + (tasa > 0 ? " (" + fmt(tasa, 4) + ")." : ".");
+      const q = $("pBuscar").value.trim().toLowerCase();
+      const list = q ? products.filter((p) => p.nombre.toLowerCase().includes(q)) : products;
+      $("prodEmpty").hidden = products.length > 0;
+      $("prodList").hidden = products.length === 0;
+      const row = (p) => {
+        const cop = p.costo * (1 + p.ganancia / 100);
+        const bs = tasa > 0 ? cop / tasa : 0;
+        return { cop, bs };
+      };
+      $("prodCards").innerHTML = list.map((p) => {
+        const r = row(p);
+        return '<article class="card pcard"><input aria-label="Nombre" value="' + esc(p.nombre) + '" onchange="editProduct(' + p.id + ',\'nombre\',this.value)">' +
+          '<div class="grid g2" style="margin-top:.6rem"><label class="field"><span>Costo COP</span><input type="number" value="' + p.costo + '" onchange="editProduct(' + p.id + ',\'costo\',this.value)"></label>' +
+          '<label class="field"><span>% ganancia</span><input type="number" step="0.1" value="' + p.ganancia + '" onchange="editProduct(' + p.id + ',\'ganancia\',this.value)"></label></div>' +
+          '<div class="nums"><div><div class="kicker">Precio</div><div>' + fmt(r.cop) + ' COP</div><div class="num bs" style="font-size:1.45rem">' + (tasa > 0 ? fmt(r.bs) + " Bs" : "—") + '</div></div>' +
+          '<button class="btn btn-warn" type="button" onclick="deleteProduct(' + p.id + ')">Quitar</button></div></article>';
+      }).join("");
+      $("prodTable").innerHTML = list.map((p) => {
+        const r = row(p);
+        return "<tr><td><input aria-label='Nombre' value='" + esc(p.nombre) + "' onchange=\"editProduct(" + p.id + ",'nombre',this.value)\"></td>" +
+          "<td><input type='number' aria-label='Costo' value='" + p.costo + "' onchange=\"editProduct(" + p.id + ",'costo',this.value)\"></td>" +
+          "<td><input type='number' step='0.1' aria-label='Ganancia' value='" + p.ganancia + "' onchange=\"editProduct(" + p.id + ",'ganancia',this.value)\"></td>" +
+          "<td class='numc'>" + fmt(r.cop) + "</td><td class='numc bs'>" + (tasa > 0 ? fmt(r.bs) : "—") + "</td>" +
+          "<td><button class='btn btn-warn icon-btn' type='button' aria-label='Quitar' onclick='deleteProduct(" + p.id + ")'>✕</button></td></tr>";
+      }).join("");
+    }
+
+    function horizonCard(label, value, unit, star, accent) {
+      return '<article class="quote"' + (accent ? ' style="outline:1px solid color-mix(in srgb, var(--mint) 45%, transparent)"' : "") + "><span class='kicker'>" + label + "</span><p class='num'>" + value + (star ? "<span style='color:var(--muted)'>*</span>" : "") + "</p><p class='unit'>" + unit + "</p></article>";
+    }
+    function renderProjection() {
+      const bcv = rates.bcvUsd, p2p = avg();
+      const bp = num($("hBcvPct").value), pp = num($("hBnbPct").value);
+      const yKnown = !rates.bcvManual && rates.bcvPrev > 0;
+      $("hBcvGrid").innerHTML = [
+        horizonCard("Hace 1 mes", bcv > 0 ? fmt(pastRate(bcv, bp, 30)) : "—", "Bs/USD", true),
+        horizonCard("Hace 1 semana", bcv > 0 ? fmt(pastRate(bcv, bp, 7)) : "—", "Bs/USD", true),
+        horizonCard("Ayer", bcv > 0 ? fmt(yKnown ? rates.bcvPrev : pastRate(bcv, bp, 1)) : "—", "Bs/USD", bcv > 0 && !yKnown),
+        horizonCard("Hoy", bcv > 0 ? fmt(bcv) : "—", "Bs/USD", false, true),
+        horizonCard("Dentro de 1 semana", bcv > 0 ? fmt(projectRate(bcv, bp, 7)) : "—", "Bs/USD"),
+        horizonCard("Dentro de 1 mes", bcv > 0 ? fmt(projectRate(bcv, bp, 30)) : "—", "Bs/USD"),
+        horizonCard("BCV en 7 días", fmt(cushionOf(bp, 7)) + "%", "Sobre hoy"),
+        horizonCard("BCV en 30 días", fmt(cushionOf(bp, 30)) + "%", "Sobre hoy"),
+        horizonCard("P2P en 30 días", fmt(cushionOf(pp, 30)) + "%", "Sobre hoy")
+      ].join("");
+      $("hBnbGrid").innerHTML = [
+        horizonCard("Hace 1 mes", p2p > 0 ? fmt(pastRate(p2p, pp, 30)) : "—", "Bs/USDT", true),
+        horizonCard("Hace 1 semana", p2p > 0 ? fmt(pastRate(p2p, pp, 7)) : "—", "Bs/USDT", true),
+        horizonCard("Ayer", p2p > 0 ? fmt(pastRate(p2p, pp, 1)) : "—", "Bs/USDT", true),
+        horizonCard("Hoy", p2p > 0 ? fmt(p2p) : "—", "Bs/USDT", false, true),
+        horizonCard("Dentro de 1 semana", p2p > 0 ? fmt(projectRate(p2p, pp, 7)) : "—", "Bs/USDT"),
+        horizonCard("Dentro de 1 mes", p2p > 0 ? fmt(projectRate(p2p, pp, 30)) : "—", "Bs/USDT")
+      ].join("");
+      $("projChart").innerHTML = spark([
+        { name: "BCV", color: "#85d8a1", values: series(bcv, bp) },
+        { name: "P2P", color: "#dde4dc", values: series(p2p, pp) }
+      ], true);
+    }
+    function series(rate, pct) {
+      if (!(rate > 0)) return [];
+      const out = [];
+      for (let d = -30; d <= 30; d += 1) {
+        const abs = Math.abs(d);
+        out.push(d >= 0 ? projectRate(rate, pct, abs) : pastRate(rate, pct, abs));
+      }
+      return out;
+    }
+    function spark(lines, markToday) {
+      const vals = lines.flatMap((l) => l.values).filter((n) => Number.isFinite(n));
+      if (!vals.length) return '<p class="hint">Actualiza el monitor para dibujar la curva.</p>';
+      const w = 720, h = 220, pad = 16;
+      let min = Math.min(...vals), max = Math.max(...vals);
+      if (min === max) { min -= 1; max += 1; }
+      const x = (i, n) => pad + (i / Math.max(1, n - 1)) * (w - pad * 2);
+      const y = (v) => pad + (1 - (v - min) / (max - min)) * (h - pad * 2);
+      const paths = lines.map((line) => {
+        if (!line.values.length) return "";
+        const d = line.values.map((v, i) => (i ? "L" : "M") + x(i, line.values.length).toFixed(1) + " " + y(v).toFixed(1)).join(" ");
+        return '<path d="' + d + '" fill="none" stroke="' + line.color + '" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+      }).join("");
+      const n0 = lines.reduce((m, l) => Math.max(m, l.values.length), 0);
+      const mid = x(Math.floor((n0 - 1) / 2), n0);
+      const guide = markToday ? '<line x1="' + mid + '" y1="' + pad + '" x2="' + mid + '" y2="' + (h - pad) + '" stroke="#3b433c" stroke-dasharray="3 4"/>' : "";
+      return '<svg class="chart" viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="Curva"><line x1="' + pad + '" y1="' + (h - pad) + '" x2="' + (w - pad) + '" y2="' + (h - pad) + '" stroke="#2f3630"/>' + guide + paths + "</svg>";
+    }
+
+    function calcAll() {
+      renderDivision();
+      renderProducts();
+      renderProjection();
+      persistSoon();
+    }
+    function onManual() {
+      applyManual();
+      syncAutos();
+      renderMonitor();
+      calcAll();
+    }
+    function useMonitorCop() {
+      if (rates.cop > 0) { $("dCop").value = String(roundTo(rates.cop, 4)); calcAll(); }
+    }
+
+    function addProduct(event) {
+      event.preventDefault();
+      const nombre = $("pNombre").value.trim();
+      const costo = num($("pCosto").value);
+      const ganancia = num($("pGanancia").value);
+      if (!nombre || costo <= 0) { toast("Escribe nombre y costo en COP"); return; }
+      products.push({ id: Date.now(), nombre, costo, ganancia });
+      $("pNombre").value = ""; $("pCosto").value = ""; $("pGanancia").value = "";
+      renderProducts(); persist(); toast("Producto agregado");
+    }
+    function editProduct(id, field, value) {
+      const p = products.find((item) => item.id === id);
+      if (!p) return;
+      if (field === "nombre") p.nombre = String(value);
+      if (field === "costo") p.costo = num(value);
+      if (field === "ganancia") p.ganancia = num(value);
+      renderProducts(); persist();
+    }
+    function deleteProduct(id) {
+      products = products.filter((item) => item.id !== id);
+      renderProducts(); persist();
+    }
+    function askClear() {
+      $("clearBox").innerHTML = '<span class="hint">¿Borrar ' + products.length + '?</span> <button class="btn btn-warn" type="button" onclick="clearProducts()">Sí, borrar</button> <button class="btn btn-quiet" type="button" onclick="resetClear()">Cancelar</button>';
+    }
+    function resetClear() {
+      $("clearBox").innerHTML = '<button class="btn btn-warn" type="button" onclick="askClear()">Borrar todos</button>';
+    }
+    function clearProducts() {
+      products = []; renderProducts(); persist(); resetClear(); toast("Catálogo borrado");
+    }
+
+    function fieldIds() {
+      return ["manualBcv","manualBnbBuy","manualBnbSell","manualCop","cBcvTasa","cBcvPct","cBcvDias","cBnbTasa","cBnbPct","cBnbDias","dCop","dBcv","dBnb","hBcvPct","hBnbPct","pTasaTipo"];
+    }
+    function snapshot() {
+      const settings = {};
+      fieldIds().forEach((id) => { settings[id] = $(id).value; });
+      ["cBcvTasa","cBnbTasa","dBcv","dBnb"].forEach((id) => { settings[id + "Auto"] = $(id).dataset.auto !== "0"; });
+      settings.autoRefresh = $("autoBtn").getAttribute("aria-pressed") === "true";
+      return settings;
+    }
+    function persistSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(persist, 700); }
+    function persist() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(snapshot()));
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+    }
+    function restore() {
+      try {
+        const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+        fieldIds().forEach((id) => { if (typeof s[id] === "string" && $(id)) $(id).value = s[id]; });
+        ["cBcvTasa","cBnbTasa","dBcv","dBnb"].forEach((id) => {
+          if (s[id + "Auto"] === false) unlock($(id));
+        });
+        if (s.autoRefresh) toggleAuto(true);
+        products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || "[]");
+        if (!Array.isArray(products)) products = [];
+      } catch { products = []; }
+    }
+    function exportBackup() {
+      const data = { version: 1, exportedAt: new Date().toISOString(), settings: snapshot(), productos: products };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "gestion-puerto-ayacucho-" + new Date().toISOString().slice(0, 10) + ".json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast("Respaldo descargado");
+    }
+    function importBackup(input) {
+      const file = input.files && input.files[0];
+      input.value = "";
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const raw = JSON.parse(String(reader.result));
+          const settings = raw.settings || raw;
+          const list = Array.isArray(raw.productos) ? raw.productos : Array.isArray(raw.products) ? raw.products : [];
+          fieldIds().forEach((id) => {
+            if (settings[id] != null && $(id)) $(id).value = String(settings[id]);
+          });
+          products = list.filter((p) => p && p.nombre).map((p, i) => ({
+            id: Number(p.id) || Date.now() + i,
+            nombre: String(p.nombre),
+            costo: num(p.costo),
+            ganancia: num(p.ganancia)
+          }));
+          onManual();
+          toast("Respaldo importado");
+        } catch { toast("Ese archivo no sirve"); }
+      };
+      reader.readAsText(file);
+    }
+
+    function toggleAuto(force) {
+      const btn = $("autoBtn");
+      const next = typeof force === "boolean" ? force : btn.getAttribute("aria-pressed") !== "true";
+      btn.setAttribute("aria-pressed", next ? "true" : "false");
+      btn.textContent = next ? "Auto on" : "Auto off";
+      clearInterval(autoTimer);
+      if (next) {
+        autoTimer = setInterval(() => fetchAll(false), 60000);
+        if (force !== true) { fetchAll(false); toast("Actualización cada 60 segundos"); }
+      } else if (force !== true) toast("Actualización automática detenida");
+      persistSoon();
+    }
+
+    async function readJson(url, init) {
+      const res = await fetch(url, Object.assign({ cache: "no-store" }, init || {}));
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }
+    async function fetchAll(announce) {
+      const btn = $("refreshBtn");
+      btn.disabled = true;
+      try {
+        let data = null;
+        try {
+          const res = await fetch("/api/market" + (announce ? "?fresh=1" : ""), { cache: "no-store" });
+          if (res.ok) data = await res.json();
+        } catch { /* archivo abierto fuera del servidor */ }
+        if (!data || (!data.bcv && !data.p2p && !data.cop)) data = await fetchDirect();
+        ingest(data);
+        applyManual();
+        syncAutos();
+        renderMonitor();
+        calcAll();
+        const notes = (data && data.notes) || [];
+        $("notes").hidden = notes.length === 0;
+        $("notes").textContent = notes.length ? "Alguna fuente falló. El ajuste manual cubre el hueco. " + notes.join(" · ") : "";
+        if (announce) toast(data && data.ok === false ? "Las fuentes no respondieron" : "Tasas actualizadas");
+      } catch (err) {
+        if (announce) toast("No se pudo actualizar");
+      } finally { btn.disabled = false; }
+    }
+    async function fetchDirect() {
+      const notes = [];
+      let bcv = null, p2p = null, cop = null;
+      try {
+        const j = await readJson("https://rates.dolarvzla.com/bcv/current.json");
+        bcv = { usd: j.current.usd, eur: j.current.eur, prevUsd: j.previous && j.previous.usd, prevDate: j.previous && j.previous.date, date: j.current.date, usdChangePct: j.changePercentage && j.changePercentage.usd, eurChangePct: j.changePercentage && j.changePercentage.eur, source: "dolarvzla.com" };
+      } catch (e) { notes.push("BCV no disponible"); }
+      try {
+        const j = await readJson("https://www.usdt.com.ve/api/rates");
+        const d = j.data;
+        p2p = { binanceBuy: d.binance.buyRate, binanceSell: d.binance.sellRate, bybitBuy: d.bybit && d.bybit.buyRate, bybitSell: d.bybit && d.bybit.sellRate, source: "usdt.com.ve" };
+      } catch (e) { notes.push("P2P no disponible"); }
+      try {
+        const j = await readJson("https://api.exchangerate-api.com/v4/latest/USD");
+        cop = { perUsd: j.rates.COP, source: "exchangerate-api.com" };
+      } catch (e) { notes.push("COP no disponible"); }
+      if (!bcv || !p2p) {
+        try {
+          const rows = await readJson("https://ve.dolarapi.com/v1/dolares");
+          const oficial = rows.find((r) => r.fuente === "oficial");
+          const paralelo = rows.find((r) => r.fuente === "paralelo");
+          if (!bcv && oficial && oficial.promedio) {
+            bcv = { usd: oficial.promedio, eur: 0, prevUsd: null, prevDate: "", date: String(oficial.fechaActualizacion || "").slice(0, 10), usdChangePct: null, eurChangePct: null, source: "dolarapi.com" };
+            notes = notes.filter((n) => n !== "BCV no disponible");
+          }
+          if (!p2p && paralelo && paralelo.promedio) {
+            p2p = { binanceBuy: paralelo.promedio, binanceSell: paralelo.promedio, bybitBuy: 0, bybitSell: 0, source: "dolarapi.com · paralelo" };
+            notes = notes.filter((n) => n !== "P2P no disponible");
+          }
+        } catch (e) { /* respaldo */ }
+      }
+      if (!cop) {
+        try {
+          const j = await readJson("https://open.er-api.com/v6/latest/USD");
+          if (j.rates && j.rates.COP) {
+            cop = { perUsd: j.rates.COP, source: "open.er-api.com" };
+            notes = notes.filter((n) => n !== "COP no disponible");
+          }
+        } catch (e) { /* respaldo */ }
+      }
+      return { ok: !!(bcv || p2p || cop), fetchedAt: new Date().toISOString(), bcv, p2p, cop, notes };
+    }
+    function ingest(data) {
+      rates.fetchedAt = (data && data.fetchedAt) || new Date().toISOString();
+      if (data && data.bcv) {
+        feed.bcvUsd = num(data.bcv.usd);
+        feed.bcvEur = num(data.bcv.eur);
+        feed.bcvPrev = num(data.bcv.prevUsd);
+        rates.bcvPrevDate = data.bcv.prevDate || "";
+        rates.bcvDate = data.bcv.date || "";
+        rates.usdPct = data.bcv.usdChangePct;
+        rates.eurPct = data.bcv.eurChangePct;
+        rates.bcvSource = data.bcv.source || "";
+      }
+      if (data && data.p2p) {
+        feed.buy = num(data.p2p.binanceBuy);
+        feed.sell = num(data.p2p.binanceSell);
+        feed.bybBuy = num(data.p2p.bybitBuy);
+        feed.bybSell = num(data.p2p.bybitSell);
+        rates.p2pSource = data.p2p.source || "";
+      }
+      if (data && data.cop) {
+        feed.cop = num(data.cop.perUsd);
+        rates.copSource = data.cop.source || "";
+      }
+    }
+
+    function setMonths(months, btn) {
+      serie.months = months;
+      document.querySelectorAll("[data-months]").forEach((el) => {
+        el.className = "btn " + (el === btn ? "btn-mint" : "btn-ghost");
+      });
+      loadHistory(false);
+    }
+    function flipHistory() {
+      serie.newest = !serie.newest;
+      $("histOrder").textContent = serie.newest ? "Reciente primero" : "Antiguo primero";
+      paintHistory();
+    }
+    async function loadHistory(fresh) {
+      historyLoaded = true;
+      $("histReload").disabled = true;
+      $("histBody").innerHTML = '<tr><td colspan="3" class="empty">Leyendo meses publicados…</td></tr>';
+      try {
+        const res = await fetch("/api/historial?months=" + serie.months + (fresh ? "&fresh=1" : ""), { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        serie.points = Array.isArray(data.points) ? data.points : [];
+        serie.meta = data.ok ? (data.source + " · " + new Intl.DateTimeFormat("es-VE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(data.fetchedAt))) : (data.error || "Sin datos");
+        if (fresh && data.ok) toast("Historial actualizado · " + serie.points.length + " días");
+        if (!data.ok) toast(data.error || "No se pudo leer el historial");
+      } catch {
+        serie.points = [];
+        serie.meta = "El historial de finanzasdigital solo carga en esta vista. En el archivo suelto siguen el monitor, el colchón y los productos.";
+        toast("No se pudo leer el historial");
+      } finally {
+        $("histReload").disabled = false;
+        paintHistory();
+      }
+    }
+    function paintHistory() {
+      const pts = serie.points;
+      $("histMeta").textContent = (pts.length ? pts.length + " días · " : "") + serie.meta;
+      if (!pts.length) {
+        $("histStats").innerHTML = "";
+        $("histChart").innerHTML = '<p class="hint">Sin filas para este período.</p>';
+        $("histBody").innerHTML = '<tr><td colspan="3" class="empty">No hay filas.</td></tr>';
+        return;
+      }
+      const tasas = pts.map((p) => p.tasa);
+      const vars = pts.map((p) => p.variacion).filter((v) => v != null && Number.isFinite(v));
+      const sum = tasas.reduce((a, b) => a + b, 0);
+      let max = pts[0], min = pts[0];
+      pts.forEach((p) => { if (p.tasa > max.tasa) max = p; if (p.tasa < min.tasa) min = p; });
+      const last = pts[pts.length - 1];
+      const mean = vars.length ? vars.reduce((a, b) => a + b, 0) / vars.length : null;
+      const card = (k, v, d) => '<article class="quote"><span class="kicker">' + k + '</span><p class="num" style="font-size:1.45rem">' + v + '</p>' + (d ? '<p class="unit">' + d + "</p>" : "") + "</article>";
+      $("histStats").innerHTML = [
+        card("Promedio", fmt(sum / pts.length, 4)),
+        card("Máximo", fmt(max.tasa, 4), max.fecha),
+        card("Mínimo", fmt(min.tasa, 4), min.fecha),
+        card("Variación diaria media", fmtPct(mean)),
+        card("Última tasa", fmt(last.tasa, 4), last.fecha),
+        card("Días", String(pts.length))
+      ].join("");
+      $("histChart").innerHTML = spark([{ name: "BCV", color: "#85d8a1", values: tasas }], false);
+      const rows = serie.newest ? pts.slice().reverse() : pts;
+      $("histBody").innerHTML = rows.map((p) => {
+        const cls = p.variacion > 0 ? "up" : p.variacion < 0 ? "down" : "";
+        return "<tr><td>" + esc(p.fecha) + "</td><td class='numc'><b>" + fmt(p.tasa, 4) + "</b></td><td class='numc " + cls + "'>" + fmtPct(p.variacion) + "</td></tr>";
+      }).join("");
+    }
+
+    document.querySelectorAll("input").forEach((el) => el.addEventListener("wheel", () => el.blur(), { passive: true }));
+    restore();
+    const hash = (location.hash || "").replace("#", "");
+    if (["monitor","colchon","division","productos","proyeccion","historial"].includes(hash)) show(hash);
+    applyManual();
+    renderMonitor();
+    calcAll();
+    fetchAll(false);
+  </script>
+</body>
+</html>
